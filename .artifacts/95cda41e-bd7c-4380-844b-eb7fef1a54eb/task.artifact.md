@@ -1,0 +1,4 @@
+- [ ] Corrigir dependências do Room no `libs.versions.toml`
+- [ ] Configurar plugin KSP e dependências do Room no `app/build.gradle.kts`
+- [ ] Corrigir imports no `TransactionEntity.kt`
+- [ ] Verificar compilação
