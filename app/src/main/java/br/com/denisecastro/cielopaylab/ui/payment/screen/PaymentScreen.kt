@@ -2,29 +2,24 @@ package br.com.denisecastro.cielopaylab.ui.payment.screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import br.com.denisecastro.cielopaylab.core.util.CurrencyUtils
 import br.com.denisecastro.cielopaylab.domain.model.PaymentType
 import br.com.denisecastro.cielopaylab.domain.model.Transaction
 import br.com.denisecastro.cielopaylab.domain.model.TransactionStatus
+import br.com.denisecastro.cielopaylab.ui.components.CurrencyTextField
 import br.com.denisecastro.cielopaylab.ui.components.LoadingButton
+import br.com.denisecastro.cielopaylab.ui.components.PaymentTypeSelector
+import br.com.denisecastro.cielopaylab.ui.components.TransactionResult
 import br.com.denisecastro.cielopaylab.ui.payment.state.PaymentUiState
-import br.com.denisecastro.cielopaylab.ui.theme.BotaoNovaVenda
 import br.com.denisecastro.cielopaylab.ui.theme.BotaoProcessarVenda
 
 @Composable
@@ -36,7 +31,6 @@ fun PaymentScreen(
     onNewPayment: () -> Unit
 ) {
     val amountInCents = state.amount.toLongOrNull() ?: 0L
-    val formattedAmount = CurrencyUtils.formatFromCents(amountInCents)
 
     Column(
         modifier = Modifier
@@ -48,36 +42,21 @@ fun PaymentScreen(
             text = "Nova venda",
             style = MaterialTheme.typography.headlineMedium
         )
-        OutlinedTextField(
-            value = formattedAmount,
+        CurrencyTextField(
+            value = state.amount,
+            enabled = !state.isLoading,
             onValueChange = onAmountChanged,
-            label = { Text("Valor") },
-            modifier = Modifier.fillMaxWidth(),
-            enabled = !state.isLoading
+            modifier = Modifier.fillMaxWidth()
         )
         Text(
             text = "Forma de pagamento",
             style = MaterialTheme.typography.titleMedium
         )
-        PaymentType.entries.forEach { type ->
-            Row(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                RadioButton(
-                    selected = state.paymentType == type,
-                    onClick = { onPaymentTypeChanged(type) },
-                    enabled = !state.isLoading
-                )
-                Text(
-                    text = when (type) {
-                        PaymentType.CREDIT -> "Crédito"
-                        PaymentType.DEBIT -> "Débito"
-                        PaymentType.PIX -> "Pix"
-                    },
-                    modifier = Modifier.padding(top = 12.dp)
-                )
-            }
-        }
+        PaymentTypeSelector(
+            selectedPaymentType = state.paymentType,
+            enabled = !state.isLoading,
+            onPaymentTypeChanged = onPaymentTypeChanged
+        )
         LoadingButton(
             text = "Processar venda",
             isLoading = state.isLoading,
@@ -94,28 +73,10 @@ fun PaymentScreen(
             )
         }
         state.transaction?.let { transaction ->
-            HorizontalDivider()
-
-            Text(
-                text = if (transaction.status == TransactionStatus.APPROVED) {
-                    "Venda aprovada"
-                } else {
-                    "Venda recusada"
-                },
-                style = MaterialTheme.typography.titleLarge
+            TransactionResult(
+                transaction = transaction,
+                onNewPayment = onNewPayment
             )
-            Text(text = "Valor: ${CurrencyUtils.formatFromCents(transaction.amountInCents)}")
-            Text(text = "Tempo: ${transaction.responseTimeMillis} ms")
-            Button(
-                onClick = onNewPayment,
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = BotaoNovaVenda,
-                    contentColor = Color.White
-                )
-            ) {
-                Text("Nova venda")
-            }
         }
     }
 }
