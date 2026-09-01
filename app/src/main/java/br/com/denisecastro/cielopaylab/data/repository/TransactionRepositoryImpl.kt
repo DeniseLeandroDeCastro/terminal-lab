@@ -22,33 +22,48 @@ class TransactionRepositoryImpl @Inject constructor(
         MutableStateFlow<List<Transaction>>(emptyList())
 
     override suspend fun processTransaction(
-        amount: Double,
+        amountInCents: Long,
         paymentType: PaymentType
     ): Transaction {
 
-        val request = TransactionRequestDto(
-            amount = amount,
-            paymentType = paymentType.name
-        )
+        val request =
+            TransactionRequestDto(
+                amountInCents = amountInCents,
+                paymentType = paymentType.name
+            )
 
-        val response = api.processTransaction(
-            idempotencyKey = UUID.randomUUID().toString(),
-            request = request
-        )
+        val startTime =
+            System.currentTimeMillis()
 
-        val transaction = Transaction(
-            id = response.id,
-            amount = amount,
-            paymentType = paymentType,
-            status = TransactionStatus.valueOf(
-                response.status
-            ),
-            timestamp = System.currentTimeMillis(),
-            responseTimeMillis = 0L
-        )
+        val response =
+            api.processTransaction(
+                idempotencyKey =
+                    UUID.randomUUID().toString(),
+                request = request
+            )
+
+        val responseTime =
+            System.currentTimeMillis() -
+                    startTime
+
+        val transaction =
+            Transaction(
+                id = response.id,
+                amountInCents = amountInCents,
+                paymentType = paymentType,
+                status =
+                    TransactionStatus.valueOf(
+                        response.status
+                    ),
+                timestamp =
+                    System.currentTimeMillis(),
+                responseTimeMillis =
+                    responseTime
+            )
 
         transactions.value =
-            listOf(transaction) + transactions.value
+            listOf(transaction) +
+                    transactions.value
 
         return transaction
     }

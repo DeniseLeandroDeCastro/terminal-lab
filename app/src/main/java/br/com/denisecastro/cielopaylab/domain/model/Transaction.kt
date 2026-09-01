@@ -2,7 +2,7 @@ package br.com.denisecastro.cielopaylab.domain.model
 
 data class Transaction(
     val id: String,
-    val amount: Double,
+    val amountInCents: Long,
     val paymentType: PaymentType,
     val status: TransactionStatus,
     val timestamp: Long,

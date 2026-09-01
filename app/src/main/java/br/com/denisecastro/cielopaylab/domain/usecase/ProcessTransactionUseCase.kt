@@ -10,16 +10,16 @@ class ProcessTransactionUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(
-        amount: Double,
+        amountInCents: Long,
         paymentType: PaymentType
     ): Transaction {
 
-        require(amount > 0) {
+        require(amountInCents > 0) {
             "O valor da transação deve ser maior que zero."
         }
 
         return repository.processTransaction(
-            amount = amount,
+            amountInCents = amountInCents,
             paymentType = paymentType
         )
     }

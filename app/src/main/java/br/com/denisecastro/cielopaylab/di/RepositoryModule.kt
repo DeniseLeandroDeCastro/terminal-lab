@@ -1,6 +1,6 @@
 package br.com.denisecastro.cielopaylab.di
 
-import br.com.denisecastro.cielopaylab.data.repository.TransactionRepositoryImpl
+import br.com.denisecastro.cielopaylab.data.repository.FakeTransactionRepository
 import br.com.denisecastro.cielopaylab.domain.repository.TransactionRepository
 import dagger.Binds
 import dagger.Module
@@ -15,6 +15,6 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindTransactionRepository(
-        repository: TransactionRepositoryImpl
+        repository: FakeTransactionRepository
     ): TransactionRepository
 }

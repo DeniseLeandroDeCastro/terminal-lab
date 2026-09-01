@@ -5,8 +5,9 @@ import br.com.denisecastro.cielopaylab.domain.model.Transaction
 import kotlinx.coroutines.flow.Flow
 
 interface TransactionRepository {
+
     suspend fun processTransaction(
-        amount: Double,
+        amountInCents: Long,
         paymentType: PaymentType
     ): Transaction
 

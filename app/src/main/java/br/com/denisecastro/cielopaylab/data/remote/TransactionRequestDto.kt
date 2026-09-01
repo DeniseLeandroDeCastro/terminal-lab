@@ -1,6 +1,6 @@
 package br.com.denisecastro.cielopaylab.data.remote
 
 data class TransactionRequestDto(
-    val amount: Double,
+    val amountInCents: Long,
     val paymentType: String
 )

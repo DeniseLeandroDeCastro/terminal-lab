@@ -7,14 +7,9 @@ import androidx.room.PrimaryKey
 data class TransactionEntity(
     @PrimaryKey
     val id: String,
-
-    val amount: Double,
-
+    val amountInCents: Long,
     val paymentType: String,
-
     val status: String,
-
     val timestamp: Long,
-
     val responseTimeMillis: Long
 )

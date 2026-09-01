@@ -32,7 +32,8 @@ class MainActivity : ComponentActivity() {
                     state = state,
                     onAmountChanged = viewModel::onAmountChanged,
                     onPaymentTypeChanged = viewModel::onPaymentTypeChanged,
-                    onProcessPayment = viewModel::processPayment
+                    onProcessPayment = viewModel::processPayment,
+                    onNewPayment = viewModel::newPayment
                 )
             }
         }
@@ -47,7 +48,8 @@ fun MainPreview() {
             state = PaymentUiState(),
             onAmountChanged = {},
             onPaymentTypeChanged = {},
-            onProcessPayment = {}
+            onProcessPayment = {},
+            onNewPayment = {}
         )
     }
 }
