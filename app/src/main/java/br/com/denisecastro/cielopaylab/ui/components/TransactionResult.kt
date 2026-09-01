@@ -61,7 +61,7 @@ fun TransactionResult(
     }
 }
 
-@Preview(showSystemUi = true)
+@Preview(showBackground = true)
 @Composable
 fun TransactionResultPreview() {
     TransactionResult(

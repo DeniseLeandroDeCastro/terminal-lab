@@ -50,7 +50,7 @@ private fun PaymentType.toDisplayName(): String {
     }
 }
 
-@Preview(showSystemUi = true)
+@Preview(showBackground = true)
 @Composable
 fun PaymentTypeSelectorPreview() {
     PaymentTypeSelector(

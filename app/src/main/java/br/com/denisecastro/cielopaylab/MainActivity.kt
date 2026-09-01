@@ -4,13 +4,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.hilt.navigation.compose.hiltViewModel
-import br.com.denisecastro.cielopaylab.ui.payment.screen.PaymentScreen
-import br.com.denisecastro.cielopaylab.ui.payment.state.PaymentUiState
-import br.com.denisecastro.cielopaylab.ui.payment.viewmodel.PaymentViewModel
+import androidx.navigation.compose.rememberNavController
+import br.com.denisecastro.cielopaylab.ui.home.screen.HomeScreen
+import br.com.denisecastro.cielopaylab.ui.navigation.AppNavHost
 import br.com.denisecastro.cielopaylab.ui.theme.CieloPayLabTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -19,37 +16,26 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContent {
-
-            val viewModel: PaymentViewModel = hiltViewModel()
-
-            val state by viewModel.uiState.collectAsState()
-
-            CieloPayLabTheme {
-
-                PaymentScreen(
-                    state = state,
-                    onAmountChanged = viewModel::onAmountChanged,
-                    onPaymentTypeChanged = viewModel::onPaymentTypeChanged,
-                    onProcessPayment = viewModel::processPayment,
-                    onNewPayment = viewModel::newPayment
-                )
-            }
+            CieloPayApp()
         }
     }
 }
 
-@Preview(showBackground = true)
 @Composable
-fun MainPreview() {
+fun CieloPayApp() {
     CieloPayLabTheme {
-        PaymentScreen(
-            state = PaymentUiState(),
-            onAmountChanged = {},
-            onPaymentTypeChanged = {},
-            onProcessPayment = {},
-            onNewPayment = {}
+        val navController = rememberNavController()
+        AppNavHost(
+            navController = navController
         )
+    }
+}
+
+@Preview(showSystemUi = true)
+@Composable
+fun CieloPayAppPreview() {
+    CieloPayLabTheme {
+        HomeScreen(onNewPayment = {})
     }
 }

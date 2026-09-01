@@ -60,7 +60,7 @@ fun LoadingButton(
     }
 }
 
-@Preview(showSystemUi = true)
+@Preview(showBackground = true)
 @Composable
 fun LoadingButtonPreview() {
     LoadingButton(
