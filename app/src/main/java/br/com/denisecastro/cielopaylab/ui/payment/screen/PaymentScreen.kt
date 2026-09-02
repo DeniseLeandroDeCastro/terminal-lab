@@ -21,62 +21,93 @@ import br.com.denisecastro.cielopaylab.ui.components.PaymentTypeSelector
 import br.com.denisecastro.cielopaylab.ui.components.TransactionResult
 import br.com.denisecastro.cielopaylab.ui.payment.state.PaymentUiState
 import br.com.denisecastro.cielopaylab.ui.theme.BotaoProcessarVenda
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBar
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PaymentScreen(
     state: PaymentUiState,
     onAmountChanged: (String) -> Unit,
     onPaymentTypeChanged: (PaymentType) -> Unit,
     onProcessPayment: () -> Unit,
-    onNewPayment: () -> Unit
+    onNewPayment: () -> Unit,
+    onBack: () -> Unit
 ) {
     val amountInCents = state.amount.toLongOrNull() ?: 0L
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        Text(
-            text = "Nova venda",
-            style = MaterialTheme.typography.headlineMedium
-        )
-        CurrencyTextField(
-            value = state.amount,
-            enabled = !state.isLoading,
-            onValueChange = onAmountChanged,
-            modifier = Modifier.fillMaxWidth()
-        )
-        Text(
-            text = "Forma de pagamento",
-            style = MaterialTheme.typography.titleMedium
-        )
-        PaymentTypeSelector(
-            selectedPaymentType = state.paymentType,
-            enabled = !state.isLoading,
-            onPaymentTypeChanged = onPaymentTypeChanged
-        )
-        LoadingButton(
-            text = "Processar venda",
-            isLoading = state.isLoading,
-            enabled = amountInCents > 0L,
-            onClick = onProcessPayment,
-            modifier = Modifier.fillMaxWidth(),
-            containerColor = BotaoProcessarVenda,
-            contentColor = Color.White
-        )
-        state.errorMessage?.let { error ->
-            Text(
-                text = error,
-                color = MaterialTheme.colorScheme.error
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(text = "Nova venda")
+                },
+                navigationIcon = {
+                    IconButton(
+                        onClick = onBack
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Voltar"
+                        )
+                    }
+                }
             )
         }
-        state.transaction?.let { transaction ->
-            TransactionResult(
-                transaction = transaction,
-                onNewPayment = onNewPayment
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(24.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            CurrencyTextField(
+                value = state.amount,
+                enabled = !state.isLoading,
+                onValueChange = onAmountChanged,
+                modifier = Modifier.fillMaxWidth()
             )
+
+            Text(
+                text = "Forma de pagamento",
+                style = MaterialTheme.typography.titleMedium
+            )
+
+            PaymentTypeSelector(
+                selectedPaymentType = state.paymentType,
+                enabled = !state.isLoading,
+                onPaymentTypeChanged = onPaymentTypeChanged
+            )
+
+            LoadingButton(
+                text = "Processar venda",
+                isLoading = state.isLoading,
+                enabled = amountInCents > 0L,
+                onClick = onProcessPayment,
+                modifier = Modifier.fillMaxWidth(),
+                containerColor = BotaoProcessarVenda,
+                contentColor = Color.White
+            )
+
+            state.errorMessage?.let { error ->
+                Text(
+                    text = error,
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
+
+            state.transaction?.let { transaction ->
+                TransactionResult(
+                    transaction = transaction,
+                    onNewPayment = onNewPayment
+                )
+            }
         }
     }
 }
@@ -102,6 +133,7 @@ fun PaymentScreenPreview() {
         onAmountChanged = {},
         onPaymentTypeChanged = {},
         onProcessPayment = {},
-        onNewPayment = {}
+        onNewPayment = {},
+        onBack = {}
     )
 }

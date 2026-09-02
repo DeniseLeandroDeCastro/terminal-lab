@@ -36,6 +36,9 @@ fun CieloPayApp() {
 @Composable
 fun CieloPayAppPreview() {
     CieloPayLabTheme {
-        HomeScreen(onNewPayment = {})
+        HomeScreen(
+            onNewPayment = {},
+            onHistory = {}
+        )
     }
 }

@@ -13,16 +13,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import br.com.denisecastro.cielopaylab.ui.components.LoadingButton
+import br.com.denisecastro.cielopaylab.ui.theme.BotaoHistorico
 import br.com.denisecastro.cielopaylab.ui.theme.BotaoNovaVenda
 
 @Composable
 fun HomeScreen(
-    onNewPayment: () -> Unit
+    onNewPayment: () -> Unit,
+    onHistory: () -> Unit
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp),
+            .padding(horizontal = 24.dp,32.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
         Text(
@@ -44,6 +46,16 @@ fun HomeScreen(
             containerColor = BotaoNovaVenda,
             contentColor = Color.White
         )
+
+        LoadingButton(
+            text = "Histórico de transações",
+            isLoading = false,
+            enabled = true,
+            onClick = onHistory,
+            modifier = Modifier.fillMaxWidth(),
+            containerColor = BotaoHistorico,
+            contentColor = Color.White
+        )
     }
 }
 
@@ -51,6 +63,7 @@ fun HomeScreen(
 @Composable
 fun HomeScreenPreview() {
     HomeScreen(
-        onNewPayment = {}
+        onNewPayment = {},
+        onHistory = {}
     )
 }

@@ -7,9 +7,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import br.com.denisecastro.cielopaylab.ui.history.screen.TransactionHistoryScreen
 import br.com.denisecastro.cielopaylab.ui.home.screen.HomeScreen
 import br.com.denisecastro.cielopaylab.ui.payment.screen.PaymentScreen
 import br.com.denisecastro.cielopaylab.ui.payment.viewmodel.PaymentViewModel
+import br.com.denisecastro.cielopaylab.ui.history.viewmodel.TransactionHistoryViewModel
 
 @Composable
 fun AppNavHost(
@@ -23,6 +25,9 @@ fun AppNavHost(
             HomeScreen(
                 onNewPayment = {
                     navController.navigate(AppRoute.Payment.route)
+                },
+                onHistory = {
+                    navController.navigate(AppRoute.History.route)
                 }
             )
         }
@@ -30,12 +35,29 @@ fun AppNavHost(
         composable(AppRoute.Payment.route) {
             val viewModel: PaymentViewModel = hiltViewModel()
             val state by viewModel.uiState.collectAsStateWithLifecycle()
+
             PaymentScreen(
                 state = state,
                 onAmountChanged = viewModel::onAmountChanged,
                 onPaymentTypeChanged = viewModel::onPaymentTypeChanged,
                 onProcessPayment = viewModel::processPayment,
-                onNewPayment = viewModel::newPayment
+                onNewPayment = viewModel::newPayment,
+                onBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(AppRoute.History.route) {
+            val viewModel: TransactionHistoryViewModel = hiltViewModel()
+            val transactions by viewModel.transactions.collectAsStateWithLifecycle()
+
+            TransactionHistoryScreen(
+                transactions = transactions,
+                onTransactionClick = {},
+                onBack = {
+                    navController.popBackStack()
+                }
             )
         }
     }
