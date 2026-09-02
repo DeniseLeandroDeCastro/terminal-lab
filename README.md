@@ -1,3 +1,9 @@
+<div align="center">
+  
+![Static Badge](https://img.shields.io/badge/Status-Projeto%20em%20constru%C3%A7%C3%A3o-%23F8BA00)
+
+</div>
+
 # 💳 CieloPayLab
 
 Aplicativo Android desenvolvido como projeto de estudo prático para aprofundamento em 
