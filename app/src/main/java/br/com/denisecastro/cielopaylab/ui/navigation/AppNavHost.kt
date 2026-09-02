@@ -7,6 +7,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import br.com.denisecastro.cielopaylab.ui.details.TransactionDetailsScreen
 import br.com.denisecastro.cielopaylab.ui.history.screen.TransactionHistoryScreen
 import br.com.denisecastro.cielopaylab.ui.home.screen.HomeScreen
 import br.com.denisecastro.cielopaylab.ui.payment.screen.PaymentScreen
@@ -54,7 +55,28 @@ fun AppNavHost(
 
             TransactionHistoryScreen(
                 transactions = transactions,
-                onTransactionClick = {},
+                onTransactionClick = { transaction ->
+                    navController.navigate(
+                        AppRoute.TransactionDetails.createRoute(
+                            transaction.id
+                        )
+                    )
+                },
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable(
+            route = AppRoute.TransactionDetails.route
+        ) { backStackEntry ->
+
+            val transactionId =
+                backStackEntry.arguments
+                    ?.getString("transactionId")
+                    .orEmpty()
+
+            TransactionDetailsScreen(
+                transactionId = transactionId,
                 onBack = {
                     navController.popBackStack()
                 }

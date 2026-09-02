@@ -12,4 +12,6 @@ interface TransactionRepository {
     ): Transaction
 
     fun observeTransactions(): Flow<List<Transaction>>
+
+    suspend fun getTransactionById(id: String): Transaction?
 }

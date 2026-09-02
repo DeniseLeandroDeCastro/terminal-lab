@@ -73,4 +73,12 @@ class TransactionRepositoryImpl @Inject constructor(
 
         return transactions.asStateFlow()
     }
+
+    override suspend fun getTransactionById(
+        id: String
+    ): Transaction? {
+        return transactions.value.find { transaction ->
+            transaction.id == id
+        }
+    }
 }
