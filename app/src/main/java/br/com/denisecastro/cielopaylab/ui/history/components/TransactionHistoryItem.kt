@@ -16,6 +16,8 @@ import br.com.denisecastro.cielopaylab.domain.model.PaymentType
 import br.com.denisecastro.cielopaylab.domain.model.Transaction
 import br.com.denisecastro.cielopaylab.domain.model.TransactionStatus
 import br.com.denisecastro.cielopaylab.ui.theme.CieloPayLabTheme
+import br.com.denisecastro.cielopaylab.ui.utils.toDisplayName
+import br.com.denisecastro.cielopaylab.ui.utils.toFormattedDate
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -60,22 +62,6 @@ fun TransactionHistoryItem(
     }
 }
 
-private fun PaymentType.toDisplayName(): String {
-    return when (this) {
-        PaymentType.CREDIT -> "Crédito"
-        PaymentType.DEBIT -> "Débito"
-        PaymentType.PIX -> "Pix"
-    }
-}
-
-private fun TransactionStatus.toDisplayName(): String {
-    return when (this) {
-        TransactionStatus.APPROVED -> "Venda aprovada"
-        TransactionStatus.DECLINED -> "Venda recusada"
-        TransactionStatus.ERROR -> "Erro na transação"
-    }
-}
-
 @Composable
 private fun TransactionStatus.toStatusColor() =
     when (this) {
@@ -83,15 +69,6 @@ private fun TransactionStatus.toStatusColor() =
         TransactionStatus.DECLINED -> MaterialTheme.colorScheme.error
         TransactionStatus.ERROR -> MaterialTheme.colorScheme.error
     }
-
-private fun Long.toFormattedDate(): String {
-    val formatter = SimpleDateFormat(
-        "dd/MM/yyyy HH:mm",
-        Locale("pt", "BR")
-    )
-
-    return formatter.format(Date(this))
-}
 
 @Preview(showBackground = true)
 @Composable
