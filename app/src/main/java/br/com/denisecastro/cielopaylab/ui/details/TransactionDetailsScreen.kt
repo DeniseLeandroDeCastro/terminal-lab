@@ -16,12 +16,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import br.com.denisecastro.cielopaylab.domain.model.PaymentType
+import br.com.denisecastro.cielopaylab.domain.model.Transaction
+import br.com.denisecastro.cielopaylab.domain.model.TransactionStatus
 import br.com.denisecastro.cielopaylab.ui.theme.CieloPayLabTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TransactionDetailsScreen(
-    transactionId: String,
+    transaction: Transaction?,
     onBack: () -> Unit
 ) {
     Scaffold(
@@ -51,13 +54,12 @@ fun TransactionDetailsScreen(
                 .padding(24.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Text(
-                text = "ID da transação:"
-            )
-
-            Text(
-                text = transactionId
-            )
+            if (transaction == null) {
+                Text(text = "Carregando transação...")
+            } else {
+                Text(text = "ID da transação:")
+                Text(text = transaction.id)
+            }
         }
     }
 }
@@ -67,7 +69,14 @@ fun TransactionDetailsScreen(
 fun TransactionDetailsScreenPreview() {
     CieloPayLabTheme {
         TransactionDetailsScreen(
-            transactionId = "123e4567-e89b-12d3-a456-426614174000",
+            transaction = Transaction(
+                id = "123e4567-e89b-12d3-a456-426614174000",
+                amountInCents = 15000L,
+                paymentType = PaymentType.PIX,
+                status = TransactionStatus.APPROVED,
+                timestamp = System.currentTimeMillis(),
+                responseTimeMillis = 250L
+            ),
             onBack = {}
         )
     }

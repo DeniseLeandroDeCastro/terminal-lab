@@ -1,6 +1,7 @@
 package br.com.denisecastro.cielopaylab.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -8,11 +9,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import br.com.denisecastro.cielopaylab.ui.details.TransactionDetailsScreen
+import br.com.denisecastro.cielopaylab.ui.details.viewmodel.TransactionDetailsViewModel
 import br.com.denisecastro.cielopaylab.ui.history.screen.TransactionHistoryScreen
 import br.com.denisecastro.cielopaylab.ui.home.screen.HomeScreen
 import br.com.denisecastro.cielopaylab.ui.payment.screen.PaymentScreen
 import br.com.denisecastro.cielopaylab.ui.payment.viewmodel.PaymentViewModel
 import br.com.denisecastro.cielopaylab.ui.history.viewmodel.TransactionHistoryViewModel
+import androidx.compose.runtime.LaunchedEffect
 
 @Composable
 fun AppNavHost(
@@ -69,17 +72,19 @@ fun AppNavHost(
         composable(
             route = AppRoute.TransactionDetails.route
         ) { backStackEntry ->
-
             val transactionId =
                 backStackEntry.arguments
                     ?.getString("transactionId")
                     .orEmpty()
+            val viewModel: TransactionDetailsViewModel = hiltViewModel()
+            val transaction by viewModel.transaction.collectAsStateWithLifecycle()
+            LaunchedEffect(transactionId) {
+                viewModel.loadTransaction(transactionId)
+            }
 
             TransactionDetailsScreen(
-                transactionId = transactionId,
-                onBack = {
-                    navController.popBackStack()
-                }
+                transaction = transaction,
+                onBack = { navController.popBackStack() }
             )
         }
     }
