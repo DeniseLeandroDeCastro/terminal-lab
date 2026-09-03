@@ -18,17 +18,13 @@ import kotlin.random.Random
 class FakeTransactionRepository @Inject constructor() :
     TransactionRepository {
 
-    private val transactions =
-        MutableStateFlow<List<Transaction>>(emptyList())
+    private val transactions = MutableStateFlow<List<Transaction>>(emptyList())
 
     override suspend fun processTransaction(
         amountInCents: Long,
         paymentType: PaymentType
     ): Transaction {
-
-        val startTime =
-            System.currentTimeMillis()
-
+        val startTime = System.currentTimeMillis()
         delay(800)
 
         val status =
@@ -51,24 +47,40 @@ class FakeTransactionRepository @Inject constructor() :
                             startTime
             )
 
-        transactions.value =
-            listOf(transaction) +
-                    transactions.value
-
+        transactions.value = listOf(transaction) + transactions.value
         return transaction
     }
 
-    override fun observeTransactions():
-            Flow<List<Transaction>> {
-
+    override fun observeTransactions(): Flow<List<Transaction>> {
         return transactions.asStateFlow()
     }
 
-    override suspend fun getTransactionById(
-        id: String
-    ): Transaction? {
+    override suspend fun getTransactionById(id: String): Transaction? {
         return transactions.value.find { transaction ->
             transaction.id == id
         }
+    }
+
+    override suspend fun cancelTransaction(id: String): Transaction? {
+        val transaction = transactions.value.find { transaction ->
+                transaction.id == id
+        } ?: return null
+
+        if (transaction.status != TransactionStatus.APPROVED) {
+            return null
+        }
+
+        val cancelledTransaction = transaction.copy(
+                status = TransactionStatus.CANCELLED
+        )
+
+        transactions.value = transactions.value.map { currentTransaction ->
+            if (currentTransaction.id == id) {
+                cancelledTransaction
+            } else {
+                currentTransaction
+            }
+        }
+        return cancelledTransaction
     }
 }

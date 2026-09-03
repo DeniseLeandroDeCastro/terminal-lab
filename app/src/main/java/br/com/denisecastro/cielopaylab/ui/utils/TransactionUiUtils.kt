@@ -19,6 +19,7 @@ fun TransactionStatus.toDisplayName(): String {
         TransactionStatus.APPROVED -> "Venda aprovada"
         TransactionStatus.DECLINED -> "Venda recusada"
         TransactionStatus.ERROR -> "Erro na transação"
+        TransactionStatus.CANCELLED -> "Venda cancelada"
     }
 }
 

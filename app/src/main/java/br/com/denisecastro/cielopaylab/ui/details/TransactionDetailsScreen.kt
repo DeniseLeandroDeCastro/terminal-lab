@@ -159,16 +159,11 @@ private fun TransactionDetailRow(
 }
 
 @Composable
-private fun TransactionStatus.toStatusColor() =
-    when (this) {
-        TransactionStatus.APPROVED ->
-            MaterialTheme.colorScheme.primary
-
-        TransactionStatus.DECLINED ->
-            MaterialTheme.colorScheme.error
-
-        TransactionStatus.ERROR ->
-            MaterialTheme.colorScheme.error
+private fun TransactionStatus.toStatusColor() = when (this) {
+        TransactionStatus.APPROVED -> MaterialTheme.colorScheme.primary
+        TransactionStatus.DECLINED -> MaterialTheme.colorScheme.error
+        TransactionStatus.ERROR -> MaterialTheme.colorScheme.error
+        TransactionStatus.CANCELLED -> MaterialTheme.colorScheme.onSurfaceVariant
     }
 
 

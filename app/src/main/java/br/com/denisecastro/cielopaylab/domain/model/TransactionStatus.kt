@@ -1,5 +1,5 @@
 package br.com.denisecastro.cielopaylab.domain.model
 
 enum class TransactionStatus {
-    APPROVED, DECLINED, ERROR
+    APPROVED, DECLINED, ERROR, CANCELLED
 }
