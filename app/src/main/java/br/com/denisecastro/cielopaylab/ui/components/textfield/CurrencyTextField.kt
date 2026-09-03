@@ -1,4 +1,4 @@
-package br.com.denisecastro.cielopaylab.ui.components
+package br.com.denisecastro.cielopaylab.ui.components.textfield
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.OutlinedTextField

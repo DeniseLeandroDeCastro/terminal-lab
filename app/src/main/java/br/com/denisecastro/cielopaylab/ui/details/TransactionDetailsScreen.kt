@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -30,13 +31,24 @@ import br.com.denisecastro.cielopaylab.ui.utils.toFormattedDate
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import br.com.denisecastro.cielopaylab.ui.components.dialog.CancelTransactionDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TransactionDetailsScreen(
     transaction: Transaction?,
+    onCancelTransaction: () -> Unit,
     onBack: () -> Unit
 ) {
+    var showCancelDialog by remember {
+        mutableStateOf(false)
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -56,7 +68,6 @@ fun TransactionDetailsScreen(
             )
         }
     ) { innerPadding ->
-
         if (transaction == null) {
             Column(
                 modifier = Modifier
@@ -69,6 +80,9 @@ fun TransactionDetailsScreen(
         } else {
             TransactionDetailsContent(
                 transaction = transaction,
+                onCancelTransaction = {
+                    showCancelDialog = true
+                },
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
@@ -76,11 +90,23 @@ fun TransactionDetailsScreen(
             )
         }
     }
+    if (showCancelDialog) {
+        CancelTransactionDialog(
+            onConfirm = {
+                showCancelDialog = false
+                onCancelTransaction()
+            },
+            onDismiss = {
+                showCancelDialog = false
+            }
+        )
+    }
 }
 
 @Composable
 private fun TransactionDetailsContent(
     transaction: Transaction,
+    onCancelTransaction: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -134,6 +160,19 @@ private fun TransactionDetailsContent(
                 )
             }
         }
+
+        if (transaction.status == TransactionStatus.APPROVED) {
+            Button(
+                onClick = onCancelTransaction,
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.error,
+                    contentColor = MaterialTheme.colorScheme.onError
+                )
+            ) {
+                Text(text = "Cancelar venda")
+            }
+        }
     }
 }
 
@@ -180,6 +219,7 @@ fun TransactionDetailsApprovedPreview() {
                 timestamp = System.currentTimeMillis(),
                 responseTimeMillis = 250L
             ),
+            onCancelTransaction = {},
             onBack = {}
         )
     }
@@ -198,6 +238,26 @@ fun TransactionDetailsDeclinedPreview() {
                 timestamp = System.currentTimeMillis(),
                 responseTimeMillis = 430L
             ),
+            onCancelTransaction = {},
+            onBack = {}
+        )
+    }
+}
+
+@Preview(name = "Transação cancelada", showSystemUi = true)
+@Composable
+fun TransactionDetailsCancelledPreview() {
+    CieloPayLabTheme {
+        TransactionDetailsScreen(
+            transaction = Transaction(
+                id = "456e7890-e89b-12d3-a456-426614174111",
+                amountInCents = 15000L,
+                paymentType = PaymentType.PIX,
+                status = TransactionStatus.CANCELLED,
+                timestamp = System.currentTimeMillis(),
+                responseTimeMillis = 250L
+            ),
+            onCancelTransaction = {},
             onBack = {}
         )
     }

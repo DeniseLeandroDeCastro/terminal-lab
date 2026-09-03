@@ -15,8 +15,8 @@ import androidx.compose.ui.unit.dp
 import br.com.denisecastro.cielopaylab.domain.model.PaymentType
 import br.com.denisecastro.cielopaylab.domain.model.Transaction
 import br.com.denisecastro.cielopaylab.domain.model.TransactionStatus
-import br.com.denisecastro.cielopaylab.ui.components.CurrencyTextField
-import br.com.denisecastro.cielopaylab.ui.components.LoadingButton
+import br.com.denisecastro.cielopaylab.ui.components.textfield.CurrencyTextField
+import br.com.denisecastro.cielopaylab.ui.components.button.LoadingButton
 import br.com.denisecastro.cielopaylab.ui.components.PaymentTypeSelector
 import br.com.denisecastro.cielopaylab.ui.components.TransactionResult
 import br.com.denisecastro.cielopaylab.ui.payment.state.PaymentUiState

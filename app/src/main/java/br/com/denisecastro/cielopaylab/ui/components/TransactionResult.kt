@@ -15,6 +15,7 @@ import br.com.denisecastro.cielopaylab.core.util.CurrencyUtils
 import br.com.denisecastro.cielopaylab.domain.model.PaymentType
 import br.com.denisecastro.cielopaylab.domain.model.Transaction
 import br.com.denisecastro.cielopaylab.domain.model.TransactionStatus
+import br.com.denisecastro.cielopaylab.ui.components.button.LoadingButton
 import br.com.denisecastro.cielopaylab.ui.theme.BotaoNovaVenda
 
 @Composable

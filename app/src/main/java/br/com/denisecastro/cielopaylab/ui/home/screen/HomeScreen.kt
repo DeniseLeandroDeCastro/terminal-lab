@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import br.com.denisecastro.cielopaylab.ui.components.LoadingButton
+import br.com.denisecastro.cielopaylab.ui.components.button.LoadingButton
 import br.com.denisecastro.cielopaylab.ui.theme.BotaoHistorico
 import br.com.denisecastro.cielopaylab.ui.theme.BotaoNovaVenda
 

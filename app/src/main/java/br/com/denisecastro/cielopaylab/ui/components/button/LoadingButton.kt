@@ -1,4 +1,4 @@
-package br.com.denisecastro.cielopaylab.ui.components
+package br.com.denisecastro.cielopaylab.ui.components.button
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
