@@ -70,30 +70,26 @@ fun AppNavHost(
         }
 
         composable(route = AppRoute.TransactionDetails.route) { backStackEntry ->
-            val transactionId =
-                backStackEntry.arguments
-                    ?.getString("transactionId")
-                    .orEmpty()
+            val transactionId = backStackEntry.arguments?.getString("transactionId").orEmpty()
 
             val viewModel: TransactionDetailsViewModel = hiltViewModel()
 
-            val transaction by viewModel.transaction.collectAsStateWithLifecycle()
+            val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
             LaunchedEffect(transactionId) {
                 viewModel.loadTransaction(transactionId)
             }
 
             TransactionDetailsScreen(
-                transaction = transaction,
+                transaction = uiState.transaction,
+                isCancelling = uiState.isCancelling,
+                errorMessage = uiState.errorMessage,
                 onCancelTransaction = {
                     viewModel.cancelTransaction()
                 },
-                onBack = { navController.popBackStack() }
-            )
-
-            TransactionDetailsScreen(
-                transaction = transaction,
-                onCancelTransaction = { viewModel.cancelTransaction() },
-                onBack = { navController.popBackStack() }
+                onBack = {
+                    navController.popBackStack()
+                }
             )
         }
     }

@@ -61,26 +61,34 @@ class FakeTransactionRepository @Inject constructor() :
         }
     }
 
-    override suspend fun cancelTransaction(id: String): Transaction? {
-        val transaction = transactions.value.find { transaction ->
+    override suspend fun cancelTransaction(
+        id: String
+    ): Transaction? {
+        delay(800)
+
+        val transaction =
+            transactions.value.find { transaction ->
                 transaction.id == id
-        } ?: return null
+            } ?: return null
 
         if (transaction.status != TransactionStatus.APPROVED) {
             return null
         }
 
-        val cancelledTransaction = transaction.copy(
+        val cancelledTransaction =
+            transaction.copy(
                 status = TransactionStatus.CANCELLED
-        )
+            )
 
-        transactions.value = transactions.value.map { currentTransaction ->
-            if (currentTransaction.id == id) {
-                cancelledTransaction
-            } else {
-                currentTransaction
+        transactions.value =
+            transactions.value.map { currentTransaction ->
+                if (currentTransaction.id == id) {
+                    cancelledTransaction
+                } else {
+                    currentTransaction
+                }
             }
-        }
+
         return cancelledTransaction
     }
 }

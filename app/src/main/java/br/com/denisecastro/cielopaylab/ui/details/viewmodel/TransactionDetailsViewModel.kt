@@ -2,7 +2,6 @@ package br.com.denisecastro.cielopaylab.ui.details.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import br.com.denisecastro.cielopaylab.domain.model.Transaction
 import br.com.denisecastro.cielopaylab.domain.usecase.CancelTransactionUseCase
 import br.com.denisecastro.cielopaylab.domain.usecase.GetTransactionByIdUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,25 +17,53 @@ class TransactionDetailsViewModel @Inject constructor(
     private val cancelTransactionUseCase: CancelTransactionUseCase
 ) : ViewModel() {
 
-    private val _transaction = MutableStateFlow<Transaction?>(null)
+    private val _uiState = MutableStateFlow(TransactionDetailsUiState())
 
-    val transaction: StateFlow<Transaction?> = _transaction.asStateFlow()
+    val uiState: StateFlow<TransactionDetailsUiState> = _uiState.asStateFlow()
 
     fun loadTransaction(transactionId: String) {
         viewModelScope.launch {
-            _transaction.value =
-                getTransactionByIdUseCase(transactionId)
+            val transaction = getTransactionByIdUseCase(transactionId)
+            _uiState.value =
+                _uiState.value.copy(
+                    transaction = transaction
+                )
         }
     }
 
-    fun cancelTransaction() { val transactionId = _transaction.value?.id ?: return
-        viewModelScope.launch {
-            val cancelledTransaction =
-                cancelTransactionUseCase(transactionId)
+    fun cancelTransaction() {
+        val transactionId = _uiState.value.transaction?.id ?: return
 
-            if (cancelledTransaction != null) {
-                _transaction.value =
-                    cancelledTransaction
+        viewModelScope.launch {
+            _uiState.value =
+                _uiState.value.copy(
+                    isCancelling = true,
+                    errorMessage = null
+                )
+
+            try {
+                val cancelledTransaction =
+                    cancelTransactionUseCase(transactionId)
+
+                if (cancelledTransaction != null) {
+                    _uiState.value =
+                        _uiState.value.copy(
+                            transaction = cancelledTransaction,
+                            isCancelling = false
+                        )
+                } else {
+                    _uiState.value =
+                        _uiState.value.copy(
+                            isCancelling = false,
+                            errorMessage = "Não foi possível cancelar a venda."
+                        )
+                }
+            } catch (exception: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    isCancelling = false,
+                    errorMessage = exception.message
+                        ?: "Erro ao cancelar a venda."
+                )
             }
         }
     }
