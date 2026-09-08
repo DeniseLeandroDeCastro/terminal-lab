@@ -82,6 +82,7 @@ fun AppNavHost(
 
             TransactionDetailsScreen(
                 transaction = uiState.transaction,
+                isLoading = uiState.isLoading,
                 isCancelling = uiState.isCancelling,
                 errorMessage = uiState.errorMessage,
                 onCancelTransaction = {

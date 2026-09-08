@@ -41,6 +41,7 @@ import br.com.denisecastro.cielopaylab.ui.components.button.LoadingButton
 @Composable
 fun TransactionDetailsScreen(
     transaction: Transaction?,
+    isLoading: Boolean,
     isCancelling: Boolean,
     errorMessage: String?,
     onCancelTransaction: () -> Unit,
@@ -68,28 +69,46 @@ fun TransactionDetailsScreen(
             )
         }
     ) { innerPadding ->
-        if (transaction == null) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-                    .padding(24.dp)
-            ) {
-                Text(text = "Carregando transação...")
+        when {
+            isLoading -> {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                        .padding(24.dp)
+                ) {
+                    Text(text = "Carregando transação...")
+                }
             }
-        } else {
-            TransactionDetailsContent(
-                transaction = transaction,
-                isCancelling = isCancelling,
-                errorMessage = errorMessage,
-                onCancelTransaction = {
-                    showCancelDialog = true
-                },
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-                    .padding(24.dp)
-            )
+
+            transaction != null -> {
+                TransactionDetailsContent(
+                    transaction = transaction,
+                    isCancelling = isCancelling,
+                    errorMessage = errorMessage,
+                    onCancelTransaction = {
+                        showCancelDialog = true
+                    },
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                        .padding(24.dp)
+                )
+            }
+
+            else -> {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                        .padding(24.dp)
+                ) {
+                    Text(
+                        text = errorMessage ?: "Transação não encontrada.",
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            }
         }
     }
     if (showCancelDialog) {
@@ -168,7 +187,7 @@ private fun TransactionDetailsContent(
         if (transaction.status == TransactionStatus.APPROVED) {
             LoadingButton(
                 text = "Cancelar venda",
-                isLoading = isCancelling,
+                isLoading = false,
                 enabled = true,
                 onClick = onCancelTransaction,
                 modifier = Modifier.fillMaxWidth(),
@@ -223,6 +242,7 @@ fun TransactionDetailsApprovedPreview() {
                 timestamp = System.currentTimeMillis(),
                 responseTimeMillis = 250L
             ),
+            isLoading = false,
             isCancelling = false,
             errorMessage = null,
             onCancelTransaction = {},
@@ -244,6 +264,7 @@ fun TransactionDetailsDeclinedPreview() {
                 timestamp = System.currentTimeMillis(),
                 responseTimeMillis = 430L
             ),
+            isLoading = false,
             onCancelTransaction = {},
             onBack = {},
             isCancelling = false,
@@ -265,6 +286,7 @@ fun TransactionDetailsCancellingPreview() {
                 timestamp = System.currentTimeMillis(),
                 responseTimeMillis = 250L
             ),
+            isLoading = false,
             isCancelling = true,
             errorMessage = null,
             onCancelTransaction = {},
@@ -286,10 +308,45 @@ fun TransactionDetailsCancelledPreview() {
                 timestamp = System.currentTimeMillis(),
                 responseTimeMillis = 250L
             ),
+            isLoading = false,
             onCancelTransaction = {},
             onBack = {},
             isCancelling = false,
             errorMessage = null
+        )
+    }
+}
+
+@Preview(
+    name = "Carregando transação",
+    showSystemUi = true
+)
+@Preview(name = "Carregando transação", showSystemUi = true)
+@Composable
+fun TransactionDetailsLoadingPreview() {
+    CieloPayLabTheme {
+        TransactionDetailsScreen(
+            transaction = null,
+            isLoading = true,
+            isCancelling = false,
+            errorMessage = null,
+            onCancelTransaction = {},
+            onBack = {}
+        )
+    }
+}
+
+@Preview(name = "Transação não encontrada", showSystemUi = true)
+@Composable
+fun TransactionDetailsNotFoundPreview() {
+    CieloPayLabTheme {
+        TransactionDetailsScreen(
+            transaction = null,
+            isLoading = false,
+            isCancelling = false,
+            errorMessage = "Transação não encontrada.",
+            onCancelTransaction = {},
+            onBack = {}
         )
     }
 }

@@ -64,7 +64,7 @@ class FakeTransactionRepository @Inject constructor() :
     override suspend fun cancelTransaction(
         id: String
     ): Transaction? {
-        delay(800)
+        delay(2_000)
 
         val transaction =
             transactions.value.find { transaction ->
@@ -75,20 +75,15 @@ class FakeTransactionRepository @Inject constructor() :
             return null
         }
 
-        val cancelledTransaction =
-            transaction.copy(
-                status = TransactionStatus.CANCELLED
-            )
+        val cancelledTransaction = transaction.copy(status = TransactionStatus.CANCELLED)
 
-        transactions.value =
-            transactions.value.map { currentTransaction ->
-                if (currentTransaction.id == id) {
-                    cancelledTransaction
-                } else {
-                    currentTransaction
-                }
+        transactions.value = transactions.value.map { currentTransaction ->
+            if (currentTransaction.id == id) {
+                cancelledTransaction
+            } else {
+                currentTransaction
             }
-
+        }
         return cancelledTransaction
     }
 }

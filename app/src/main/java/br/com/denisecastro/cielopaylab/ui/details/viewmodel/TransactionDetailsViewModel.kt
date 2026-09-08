@@ -23,11 +23,34 @@ class TransactionDetailsViewModel @Inject constructor(
 
     fun loadTransaction(transactionId: String) {
         viewModelScope.launch {
-            val transaction = getTransactionByIdUseCase(transactionId)
-            _uiState.value =
-                _uiState.value.copy(
-                    transaction = transaction
+            _uiState.value = _uiState.value.copy(
+                isLoading = true,
+                errorMessage = null
+            )
+
+            try {
+                val transaction = getTransactionByIdUseCase(transactionId)
+
+                if (transaction != null) {
+                    _uiState.value = _uiState.value.copy(
+                        transaction = transaction,
+                        isLoading = false
+                    )
+                } else {
+                    _uiState.value = _uiState.value.copy(
+                        transaction = null,
+                        isLoading = false,
+                        errorMessage = "Transação não encontrada."
+                    )
+                }
+            } catch (exception: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    transaction = null,
+                    isLoading = false,
+                    errorMessage = exception.message
+                        ?: "Erro ao carregar a transação."
                 )
+            }
         }
     }
 
