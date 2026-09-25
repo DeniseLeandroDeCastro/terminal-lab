@@ -8,11 +8,9 @@ import androidx.room.RoomDatabase
         TransactionEntity::class
     ],
     version = 1,
-    exportSchema = true
+    exportSchema = false
 )
-abstract class CieloPayDatabase :
-    RoomDatabase() {
+abstract class CieloPayDatabase : RoomDatabase() {
 
-    abstract fun transactionDao():
-            TransactionDao
+    abstract fun transactionDao(): TransactionDao
 }

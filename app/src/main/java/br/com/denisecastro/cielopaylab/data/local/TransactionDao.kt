@@ -4,26 +4,48 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TransactionDao {
 
-    @Insert(
-        onConflict =
-            OnConflictStrategy.REPLACE
-    )
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(
+        transaction: TransactionEntity
+    )
+
+    @Update
+    suspend fun update(
         transaction: TransactionEntity
     )
 
     @Query(
         """
-        SELECT *
-        FROM transactions
+        SELECT * FROM transactions
         ORDER BY timestamp DESC
         """
     )
-    fun observeAll():
-            Flow<List<TransactionEntity>>
+    fun observeTransactions(): Flow<List<TransactionEntity>>
+
+    @Query(
+        """
+        SELECT * FROM transactions
+        WHERE id = :id
+        LIMIT 1
+        """
+    )
+    suspend fun getTransactionById(
+        id: String
+    ): TransactionEntity?
+
+    @Query(
+        """
+        DELETE FROM transactions
+        WHERE id = :id
+        """
+    )
+    suspend fun deleteById(
+        id: String
+    )
 }

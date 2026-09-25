@@ -86,4 +86,12 @@ class FakeTransactionRepository @Inject constructor() :
         }
         return cancelledTransaction
     }
+
+    override suspend fun deleteTransaction(
+        id: String
+    ) {
+        transactions.value = transactions.value.filterNot { transaction ->
+            transaction.id == id
+        }
+    }
 }

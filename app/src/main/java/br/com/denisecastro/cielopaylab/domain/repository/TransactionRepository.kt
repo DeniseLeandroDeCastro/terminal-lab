@@ -14,4 +14,5 @@ interface TransactionRepository {
     fun observeTransactions(): Flow<List<Transaction>>
     suspend fun getTransactionById(id: String): Transaction?
     suspend fun cancelTransaction(id: String): Transaction?
+    suspend fun deleteTransaction(id: String)
 }

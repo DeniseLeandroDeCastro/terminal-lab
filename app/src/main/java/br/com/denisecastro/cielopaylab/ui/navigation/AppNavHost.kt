@@ -15,7 +15,6 @@ import br.com.denisecastro.cielopaylab.ui.home.screen.HomeScreen
 import br.com.denisecastro.cielopaylab.ui.payment.screen.PaymentScreen
 import br.com.denisecastro.cielopaylab.ui.payment.viewmodel.PaymentViewModel
 import br.com.denisecastro.cielopaylab.ui.history.viewmodel.TransactionHistoryViewModel
-import androidx.compose.runtime.LaunchedEffect
 
 @Composable
 fun AppNavHost(
@@ -78,6 +77,12 @@ fun AppNavHost(
 
             LaunchedEffect(transactionId) {
                 viewModel.loadTransaction(transactionId)
+            }
+
+            LaunchedEffect(uiState.isDeleted) {
+                if (uiState.isDeleted) {
+                    navController.popBackStack()
+                }
             }
 
             TransactionDetailsScreen(

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.com.denisecastro.cielopaylab.domain.usecase.CancelTransactionUseCase
 import br.com.denisecastro.cielopaylab.domain.usecase.GetTransactionByIdUseCase
+import br.com.denisecastro.cielopaylab.domain.usecase.DeleteTransactionUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +15,8 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class TransactionDetailsViewModel @Inject constructor(
     private val getTransactionByIdUseCase: GetTransactionByIdUseCase,
-    private val cancelTransactionUseCase: CancelTransactionUseCase
+    private val cancelTransactionUseCase: CancelTransactionUseCase,
+    private val deleteTransactionUseCase: DeleteTransactionUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(TransactionDetailsUiState())
@@ -23,33 +25,38 @@ class TransactionDetailsViewModel @Inject constructor(
 
     fun loadTransaction(transactionId: String) {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(
-                isLoading = true,
-                errorMessage = null
-            )
+            _uiState.value =
+                _uiState.value.copy(
+                    isLoading = true,
+                    errorMessage = null
+                )
 
             try {
-                val transaction = getTransactionByIdUseCase(transactionId)
+                val transaction =
+                    getTransactionByIdUseCase(transactionId)
 
                 if (transaction != null) {
-                    _uiState.value = _uiState.value.copy(
-                        transaction = transaction,
-                        isLoading = false
-                    )
+                    _uiState.value =
+                        _uiState.value.copy(
+                            transaction = transaction,
+                            isLoading = false
+                        )
                 } else {
-                    _uiState.value = _uiState.value.copy(
-                        transaction = null,
-                        isLoading = false,
-                        errorMessage = "Transação não encontrada."
-                    )
+                    _uiState.value =
+                        _uiState.value.copy(
+                            transaction = null,
+                            isLoading = false,
+                            errorMessage = "Transação não encontrada."
+                        )
                 }
             } catch (exception: Exception) {
-                _uiState.value = _uiState.value.copy(
-                    transaction = null,
-                    isLoading = false,
-                    errorMessage = exception.message
-                        ?: "Erro ao carregar a transação."
-                )
+                _uiState.value =
+                    _uiState.value.copy(
+                        transaction = null,
+                        isLoading = false,
+                        errorMessage = exception.message
+                            ?: "Erro ao carregar a transação."
+                    )
             }
         }
     }
@@ -86,6 +93,33 @@ class TransactionDetailsViewModel @Inject constructor(
                     isCancelling = false,
                     errorMessage = exception.message
                         ?: "Erro ao cancelar a venda."
+                )
+            }
+        }
+    }
+
+    fun deleteTransaction() {
+        val transactionId = _uiState.value.transaction?.id ?: return
+
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(
+                isDeleting = true,
+                errorMessage = null
+            )
+
+            try {
+                deleteTransactionUseCase(transactionId)
+
+                _uiState.value = _uiState.value.copy(
+                    transaction = null,
+                    isDeleting = false,
+                    isDeleted = true
+                )
+            } catch (exception: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    isDeleting = false,
+                    errorMessage = exception.message
+                        ?: "Erro ao excluir a transação."
                 )
             }
         }
