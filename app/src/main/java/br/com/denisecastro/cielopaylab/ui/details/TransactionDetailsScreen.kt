@@ -17,25 +17,24 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import br.com.denisecastro.cielopaylab.core.util.CurrencyUtils
 import br.com.denisecastro.cielopaylab.domain.model.PaymentType
 import br.com.denisecastro.cielopaylab.domain.model.Transaction
 import br.com.denisecastro.cielopaylab.domain.model.TransactionStatus
+import br.com.denisecastro.cielopaylab.ui.components.button.LoadingButton
+import br.com.denisecastro.cielopaylab.ui.components.dialog.CancelTransactionDialog
+import br.com.denisecastro.cielopaylab.ui.components.dialog.DeleteTransactionDialog
 import br.com.denisecastro.cielopaylab.ui.theme.CieloPayLabTheme
 import br.com.denisecastro.cielopaylab.ui.utils.toDisplayName
 import br.com.denisecastro.cielopaylab.ui.utils.toFormattedDate
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import br.com.denisecastro.cielopaylab.ui.components.dialog.CancelTransactionDialog
-import br.com.denisecastro.cielopaylab.ui.components.button.LoadingButton
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -43,13 +42,20 @@ fun TransactionDetailsScreen(
     transaction: Transaction?,
     isLoading: Boolean,
     isCancelling: Boolean,
+    isDeleting: Boolean,
     errorMessage: String?,
     onCancelTransaction: () -> Unit,
+    onDeleteTransaction: () -> Unit,
     onBack: () -> Unit
 ) {
     var showCancelDialog by remember {
         mutableStateOf(false)
     }
+
+    var showDeleteDialog by remember {
+        mutableStateOf(false)
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -85,9 +91,13 @@ fun TransactionDetailsScreen(
                 TransactionDetailsContent(
                     transaction = transaction,
                     isCancelling = isCancelling,
+                    isDeleting = isDeleting,
                     errorMessage = errorMessage,
                     onCancelTransaction = {
                         showCancelDialog = true
+                    },
+                    onDeleteTransaction = {
+                        showDeleteDialog = true
                     },
                     modifier = Modifier
                         .fillMaxSize()
@@ -111,6 +121,7 @@ fun TransactionDetailsScreen(
             }
         }
     }
+
     if (showCancelDialog) {
         CancelTransactionDialog(
             onConfirm = {
@@ -122,14 +133,28 @@ fun TransactionDetailsScreen(
             }
         )
     }
+
+    if (showDeleteDialog) {
+        DeleteTransactionDialog(
+            onConfirm = {
+                showDeleteDialog = false
+                onDeleteTransaction()
+            },
+            onDismiss = {
+                showDeleteDialog = false
+            }
+        )
+    }
 }
 
 @Composable
 private fun TransactionDetailsContent(
     transaction: Transaction,
     isCancelling: Boolean,
+    isDeleting: Boolean,
     errorMessage: String?,
     onCancelTransaction: () -> Unit,
+    onDeleteTransaction: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -137,9 +162,7 @@ private fun TransactionDetailsContent(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
-            text = CurrencyUtils.formatFromCents(
-                transaction.amountInCents
-            ),
+            text = CurrencyUtils.formatFromCents(transaction.amountInCents),
             style = MaterialTheme.typography.headlineMedium
         )
 
@@ -184,18 +207,36 @@ private fun TransactionDetailsContent(
             }
         }
 
+        errorMessage?.let { error ->
+            Text(
+                text = error,
+                color = MaterialTheme.colorScheme.error
+            )
+        }
+
         if (transaction.status == TransactionStatus.APPROVED) {
             LoadingButton(
                 text = "Cancelar venda",
-                isLoading = false,
-                enabled = true,
+                isLoading = isCancelling,
+                enabled = !isDeleting,
                 onClick = onCancelTransaction,
                 modifier = Modifier.fillMaxWidth(),
-                containerColor = MaterialTheme.colorScheme.error,
-                contentColor = MaterialTheme.colorScheme.onError,
-                loadingColor = MaterialTheme.colorScheme.errorContainer
+                containerColor = Color.Black,
+                contentColor = Color.White,
+                loadingColor = Color.DarkGray
             )
         }
+
+        LoadingButton(
+            text = "Excluir venda",
+            isLoading = isDeleting,
+            enabled = !isCancelling,
+            onClick = onDeleteTransaction,
+            modifier = Modifier.fillMaxWidth(),
+            containerColor = MaterialTheme.colorScheme.error,
+            contentColor = MaterialTheme.colorScheme.onError,
+            loadingColor = MaterialTheme.colorScheme.error
+        )
     }
 }
 
@@ -222,12 +263,11 @@ private fun TransactionDetailRow(
 
 @Composable
 private fun TransactionStatus.toStatusColor() = when (this) {
-        TransactionStatus.APPROVED -> MaterialTheme.colorScheme.primary
-        TransactionStatus.DECLINED -> MaterialTheme.colorScheme.error
-        TransactionStatus.ERROR -> MaterialTheme.colorScheme.error
-        TransactionStatus.CANCELLED -> MaterialTheme.colorScheme.onSurfaceVariant
-    }
-
+    TransactionStatus.APPROVED -> MaterialTheme.colorScheme.primary
+    TransactionStatus.DECLINED -> MaterialTheme.colorScheme.error
+    TransactionStatus.ERROR -> MaterialTheme.colorScheme.error
+    TransactionStatus.CANCELLED -> MaterialTheme.colorScheme.onSurfaceVariant
+}
 
 @Preview(name = "Transação aprovada", showSystemUi = true)
 @Composable
@@ -244,8 +284,10 @@ fun TransactionDetailsApprovedPreview() {
             ),
             isLoading = false,
             isCancelling = false,
+            isDeleting = false,
             errorMessage = null,
             onCancelTransaction = {},
+            onDeleteTransaction = {},
             onBack = {}
         )
     }
@@ -265,10 +307,12 @@ fun TransactionDetailsDeclinedPreview() {
                 responseTimeMillis = 430L
             ),
             isLoading = false,
-            onCancelTransaction = {},
-            onBack = {},
             isCancelling = false,
-            errorMessage = null
+            isDeleting = false,
+            errorMessage = null,
+            onCancelTransaction = {},
+            onDeleteTransaction = {},
+            onBack = {}
         )
     }
 }
@@ -288,8 +332,34 @@ fun TransactionDetailsCancellingPreview() {
             ),
             isLoading = false,
             isCancelling = true,
+            isDeleting = false,
             errorMessage = null,
             onCancelTransaction = {},
+            onDeleteTransaction = {},
+            onBack = {}
+        )
+    }
+}
+
+@Preview(name = "Excluindo transação", showSystemUi = true)
+@Composable
+fun TransactionDetailsDeletingPreview() {
+    CieloPayLabTheme {
+        TransactionDetailsScreen(
+            transaction = Transaction(
+                id = "123e4567-e89b-12d3-a456-426614174000",
+                amountInCents = 15000L,
+                paymentType = PaymentType.PIX,
+                status = TransactionStatus.APPROVED,
+                timestamp = System.currentTimeMillis(),
+                responseTimeMillis = 250L
+            ),
+            isLoading = false,
+            isCancelling = false,
+            isDeleting = true,
+            errorMessage = null,
+            onCancelTransaction = {},
+            onDeleteTransaction = {},
             onBack = {}
         )
     }
@@ -309,18 +379,16 @@ fun TransactionDetailsCancelledPreview() {
                 responseTimeMillis = 250L
             ),
             isLoading = false,
-            onCancelTransaction = {},
-            onBack = {},
             isCancelling = false,
-            errorMessage = null
+            isDeleting = false,
+            errorMessage = null,
+            onCancelTransaction = {},
+            onDeleteTransaction = {},
+            onBack = {}
         )
     }
 }
 
-@Preview(
-    name = "Carregando transação",
-    showSystemUi = true
-)
 @Preview(name = "Carregando transação", showSystemUi = true)
 @Composable
 fun TransactionDetailsLoadingPreview() {
@@ -329,8 +397,10 @@ fun TransactionDetailsLoadingPreview() {
             transaction = null,
             isLoading = true,
             isCancelling = false,
+            isDeleting = false,
             errorMessage = null,
             onCancelTransaction = {},
+            onDeleteTransaction = {},
             onBack = {}
         )
     }
@@ -344,8 +414,10 @@ fun TransactionDetailsNotFoundPreview() {
             transaction = null,
             isLoading = false,
             isCancelling = false,
+            isDeleting = false,
             errorMessage = "Transação não encontrada.",
             onCancelTransaction = {},
+            onDeleteTransaction = {},
             onBack = {}
         )
     }

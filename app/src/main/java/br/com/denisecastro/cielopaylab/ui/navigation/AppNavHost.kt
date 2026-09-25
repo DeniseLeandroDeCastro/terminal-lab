@@ -89,9 +89,13 @@ fun AppNavHost(
                 transaction = uiState.transaction,
                 isLoading = uiState.isLoading,
                 isCancelling = uiState.isCancelling,
+                isDeleting = uiState.isDeleting,
                 errorMessage = uiState.errorMessage,
                 onCancelTransaction = {
                     viewModel.cancelTransaction()
+                },
+                onDeleteTransaction = {
+                    viewModel.deleteTransaction()
                 },
                 onBack = {
                     navController.popBackStack()
