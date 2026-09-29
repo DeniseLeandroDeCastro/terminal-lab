@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import br.com.denisecastro.cielopaylab.ui.home.screen.HomeScreen
+import br.com.denisecastro.cielopaylab.ui.home.state.HomeUiState
 import br.com.denisecastro.cielopaylab.ui.navigation.AppNavHost
 import br.com.denisecastro.cielopaylab.ui.theme.CieloPayLabTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -38,7 +39,8 @@ fun CieloPayAppPreview() {
     CieloPayLabTheme {
         HomeScreen(
             onNewPayment = {},
-            onHistory = {}
+            onHistory = {},
+            state = HomeUiState()
         )
     }
 }
