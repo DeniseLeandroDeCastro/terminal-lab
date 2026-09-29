@@ -15,6 +15,7 @@ import br.com.denisecastro.cielopaylab.ui.home.screen.HomeScreen
 import br.com.denisecastro.cielopaylab.ui.payment.screen.PaymentScreen
 import br.com.denisecastro.cielopaylab.ui.payment.viewmodel.PaymentViewModel
 import br.com.denisecastro.cielopaylab.ui.history.viewmodel.TransactionHistoryViewModel
+import br.com.denisecastro.cielopaylab.ui.home.viewmodel.HomeViewModel
 
 @Composable
 fun AppNavHost(
@@ -25,7 +26,13 @@ fun AppNavHost(
         startDestination = AppRoute.Home.route
     ) {
         composable(AppRoute.Home.route) {
+
+            val viewModel: HomeViewModel = hiltViewModel()
+
+            val state by viewModel.uiState.collectAsStateWithLifecycle()
+
             HomeScreen(
+                state = state,
                 onNewPayment = {
                     navController.navigate(AppRoute.Payment.route)
                 },
