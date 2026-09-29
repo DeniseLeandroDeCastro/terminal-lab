@@ -23,6 +23,12 @@ import br.com.denisecastro.cielopaylab.domain.model.Transaction
 import br.com.denisecastro.cielopaylab.domain.model.TransactionStatus
 import br.com.denisecastro.cielopaylab.ui.history.components.TransactionHistoryItem
 import br.com.denisecastro.cielopaylab.ui.theme.CieloPayLabTheme
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import br.com.denisecastro.cielopaylab.ui.components.filterbar.TransactionFilterBar
+import br.com.denisecastro.cielopaylab.ui.history.model.TransactionFilter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -31,6 +37,26 @@ fun TransactionHistoryScreen(
     onTransactionClick: (Transaction) -> Unit,
     onBack: () -> Unit
 ) {
+    var selectedFilter by remember {
+        mutableStateOf(TransactionFilter.ALL)
+    }
+
+    val filteredTransactions = when (selectedFilter) {
+        TransactionFilter.ALL -> transactions
+
+        TransactionFilter.APPROVED -> transactions.filter {
+            it.status == TransactionStatus.APPROVED
+        }
+
+        TransactionFilter.CANCELLED -> transactions.filter {
+            it.status == TransactionStatus.CANCELLED
+        }
+
+        TransactionFilter.DECLINED -> transactions.filter {
+            it.status == TransactionStatus.DECLINED
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -51,35 +77,53 @@ fun TransactionHistoryScreen(
         }
     ) { innerPadding ->
 
-        if (transactions.isEmpty()) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-                    .padding(24.dp)
-            ) {
-                Text(text = "Nenhuma transação encontrada.")
-            }
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-                    .padding(horizontal = 24.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                items(
-                    items = transactions,
-                    key = { transaction ->
-                        transaction.id
-                    }
-                ) { transaction ->
-                    TransactionHistoryItem(
-                        transaction = transaction,
-                        onClick = {
-                            onTransactionClick(transaction)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
+
+            TransactionFilterBar(
+                selectedFilter = selectedFilter,
+                onFilterSelected = { filter ->
+                    selectedFilter = filter
+                },
+                modifier = Modifier.padding(
+                    horizontal = 24.dp,
+                    vertical = 8.dp
+                )
+            )
+
+            if (filteredTransactions.isEmpty()) {
+                Text(
+                    text = if (transactions.isEmpty()) {
+                        "Nenhuma transação encontrada."
+                    } else {
+                        "Nenhuma transação para este filtro."
+                    },
+                    modifier = Modifier.padding(24.dp)
+                )
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 24.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    items(
+                        items = filteredTransactions,
+                        key = { transaction ->
+                            transaction.id
                         }
-                    )
+                    ) { transaction ->
+
+                        TransactionHistoryItem(
+                            transaction = transaction,
+                            onClick = {
+                                onTransactionClick(transaction)
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -111,7 +155,7 @@ fun TransactionHistoryFilledPreview() {
             id = "3",
             amountInCents = 22500L,
             paymentType = PaymentType.DEBIT,
-            status = TransactionStatus.APPROVED,
+            status = TransactionStatus.CANCELLED,
             timestamp = System.currentTimeMillis(),
             responseTimeMillis = 310L
         )
@@ -120,8 +164,8 @@ fun TransactionHistoryFilledPreview() {
     CieloPayLabTheme {
         TransactionHistoryScreen(
             transactions = transactions,
-            onBack = {},
-            onTransactionClick = {}
+            onTransactionClick = {},
+            onBack = {}
         )
     }
 }
@@ -132,8 +176,8 @@ fun TransactionHistoryEmptyPreview() {
     CieloPayLabTheme {
         TransactionHistoryScreen(
             transactions = emptyList(),
-            onBack = {},
-            onTransactionClick = {}
+            onTransactionClick = {},
+            onBack = {}
         )
     }
 }
