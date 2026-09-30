@@ -28,10 +28,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import br.com.denisecastro.cielopaylab.ui.components.filterbar.TransactionFilterBar
+import br.com.denisecastro.cielopaylab.ui.components.menu.TransactionPeriodMenu
 import br.com.denisecastro.cielopaylab.ui.components.menu.TransactionSortMenu
 import br.com.denisecastro.cielopaylab.ui.history.components.TransactionHistorySummary
 import br.com.denisecastro.cielopaylab.ui.history.model.TransactionFilter
+import br.com.denisecastro.cielopaylab.ui.history.model.TransactionPeriod
 import br.com.denisecastro.cielopaylab.ui.history.model.TransactionSort
+import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,6 +51,10 @@ fun TransactionHistoryScreen(
         mutableStateOf(TransactionSort.NEWEST)
     }
 
+    var selectedPeriod by remember {
+        mutableStateOf(TransactionPeriod.ALL)
+    }
+
     val approvedTransactions = transactions.filter {
         it.status == TransactionStatus.APPROVED
     }
@@ -58,20 +65,61 @@ fun TransactionHistoryScreen(
         it.amountInCents
     }
 
+    val now = System.currentTimeMillis()
+
+    val startOfToday = Calendar.getInstance().apply {
+        set(Calendar.HOUR_OF_DAY, 0)
+        set(Calendar.MINUTE, 0)
+        set(Calendar.SECOND, 0)
+        set(Calendar.MILLISECOND, 0)
+    }.timeInMillis
+
+    val periodTransactions = when (selectedPeriod) {
+
+        TransactionPeriod.ALL -> transactions
+
+        TransactionPeriod.TODAY -> transactions.filter {
+            it.timestamp >= startOfToday
+        }
+
+        TransactionPeriod.LAST_7_DAYS -> {
+            val sevenDaysAgo =
+                now - (7L * 24 * 60 * 60 * 1000)
+
+            transactions.filter {
+                it.timestamp >= sevenDaysAgo
+            }
+        }
+
+        TransactionPeriod.LAST_30_DAYS -> {
+            val thirtyDaysAgo =
+                now - (30L * 24 * 60 * 60 * 1000)
+
+            transactions.filter {
+                it.timestamp >= thirtyDaysAgo
+            }
+        }
+    }
+
     val filteredTransactions = when (selectedFilter) {
-        TransactionFilter.ALL -> transactions
 
-        TransactionFilter.APPROVED -> transactions.filter {
-            it.status == TransactionStatus.APPROVED
-        }
+        TransactionFilter.ALL ->
+            periodTransactions
 
-        TransactionFilter.CANCELLED -> transactions.filter {
-            it.status == TransactionStatus.CANCELLED
-        }
+        TransactionFilter.APPROVED ->
+            periodTransactions.filter {
+                it.status == TransactionStatus.APPROVED
+            }
 
-        TransactionFilter.DECLINED -> transactions.filter {
-            it.status == TransactionStatus.DECLINED
-        }
+        TransactionFilter.CANCELLED ->
+            periodTransactions.filter {
+                it.status == TransactionStatus.CANCELLED
+            }
+
+        TransactionFilter.DECLINED ->
+            periodTransactions.filter {
+                it.status == TransactionStatus.DECLINED
+            }
     }
 
     val sortedTransactions = when (selectedSort) {
@@ -138,6 +186,16 @@ fun TransactionHistoryScreen(
                 modifier = Modifier.padding(
                     horizontal = 24.dp,
                     vertical = 8.dp
+                )
+            )
+
+            TransactionPeriodMenu(
+                selectedPeriod = selectedPeriod,
+                onPeriodSelected = { period ->
+                    selectedPeriod = period
+                },
+                modifier = Modifier.padding(
+                    horizontal = 24.dp
                 )
             )
 
