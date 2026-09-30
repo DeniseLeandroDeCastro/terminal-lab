@@ -55,16 +55,6 @@ fun TransactionHistoryScreen(
         mutableStateOf(TransactionPeriod.ALL)
     }
 
-    val approvedTransactions = transactions.filter {
-        it.status == TransactionStatus.APPROVED
-    }
-
-    val approvedCount = approvedTransactions.size
-
-    val approvedAmountInCents = approvedTransactions.sumOf {
-        it.amountInCents
-    }
-
     val now = System.currentTimeMillis()
 
     val startOfToday = Calendar.getInstance().apply {
@@ -99,6 +89,16 @@ fun TransactionHistoryScreen(
                 it.timestamp >= thirtyDaysAgo
             }
         }
+    }
+
+    val approvedTransactions = periodTransactions.filter {
+        it.status == TransactionStatus.APPROVED
+    }
+
+    val approvedCount = approvedTransactions.size
+
+    val approvedAmountInCents = approvedTransactions.sumOf {
+        it.amountInCents
     }
 
     val filteredTransactions = when (selectedFilter) {
@@ -172,6 +172,7 @@ fun TransactionHistoryScreen(
             TransactionHistorySummary(
                 approvedCount = approvedCount,
                 approvedAmountInCents = approvedAmountInCents,
+                periodLabel = selectedPeriod.label,
                 modifier = Modifier.padding(
                     horizontal = 24.dp,
                     vertical = 8.dp

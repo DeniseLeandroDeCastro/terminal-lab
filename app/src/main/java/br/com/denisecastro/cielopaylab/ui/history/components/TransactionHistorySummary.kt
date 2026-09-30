@@ -19,6 +19,7 @@ import br.com.denisecastro.cielopaylab.ui.theme.CieloPayLabTheme
 fun TransactionHistorySummary(
     approvedCount: Int,
     approvedAmountInCents: Long,
+    periodLabel: String,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -29,7 +30,7 @@ fun TransactionHistorySummary(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Text(
-                text = "Resumo de vendas",
+                text = "Resumo de vendas • $periodLabel",
                 style = MaterialTheme.typography.titleMedium
             )
 
@@ -74,6 +75,7 @@ fun TransactionHistorySummaryPreview() {
         TransactionHistorySummary(
             approvedCount = 8,
             approvedAmountInCents = 128000L,
+            periodLabel = "Hoje",
             modifier = Modifier.padding(16.dp)
         )
     }
@@ -86,6 +88,7 @@ fun TransactionHistorySummaryEmptyPreview() {
         TransactionHistorySummary(
             approvedCount = 0,
             approvedAmountInCents = 0L,
+            periodLabel = "Todos",
             modifier = Modifier.padding(16.dp)
         )
     }
