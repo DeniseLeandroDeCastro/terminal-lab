@@ -1,25 +1,31 @@
 package br.com.denisecastro.cielopaylab.ui.home.screen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import br.com.denisecastro.cielopaylab.ui.components.card.SalesSummaryCard
-import br.com.denisecastro.cielopaylab.ui.components.card.TransactionStatusCard
+import br.com.denisecastro.cielopaylab.ui.home.components.HomeBalanceHeader
 import br.com.denisecastro.cielopaylab.ui.home.state.HomeUiState
 import br.com.denisecastro.cielopaylab.ui.theme.CieloPayLabTheme
+import androidx.compose.foundation.layout.Row
+import androidx.compose.material.icons.filled.Add
+import br.com.denisecastro.cielopaylab.ui.home.components.HomeShortcutCard
+import br.com.denisecastro.cielopaylab.ui.home.components.RecentTransactionItem
+import androidx.compose.material3.TextButton
+import androidx.compose.ui.Alignment
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 
 @Composable
 fun HomeScreen(
@@ -30,68 +36,86 @@ fun HomeScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp)
+            .background(MaterialTheme.colorScheme.background)
+            .verticalScroll(rememberScrollState())
     ) {
 
-        Text(
-            text = "CieloPayLab",
-            style = MaterialTheme.typography.headlineMedium
-        )
-
-        Text(
-            text = "Acompanhe suas vendas",
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-
-        SalesSummaryCard(
+        HomeBalanceHeader(
             totalAmountInCents = state.totalAmountInCents,
-            totalTransactions = state.totalTransactions
+            approvedTransactions = state.approvedTransactions,
+            cancelledTransactions = state.cancelledTransactions
         )
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    horizontal = 24.dp,
+                    vertical = 24.dp
+                ),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            TransactionStatusCard(
-                title = "Aprovadas",
-                value = state.approvedTransactions,
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                modifier = Modifier.weight(1f)
+            Text(
+                text = "Acesso rápido",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
             )
 
-            TransactionStatusCard(
-                title = "Canceladas",
-                value = state.cancelledTransactions,
-                containerColor = MaterialTheme.colorScheme.errorContainer,
-                contentColor = MaterialTheme.colorScheme.onErrorContainer,
-                modifier = Modifier.weight(1f)
-            )
-        }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
 
-        Text(
-            text = "Ações",
-            style = MaterialTheme.typography.titleMedium
-        )
+                HomeShortcutCard(
+                    title = "Nova venda",
+                    description = "Criar transação",
+                    icon = Icons.Default.Add,
+                    onClick = onNewPayment,
+                    modifier = Modifier.weight(1f)
+                )
 
-        Button(
-            onClick = onNewPayment,
-            modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Black,
-                contentColor = Color.White
-            )
-        ) {
-            Text(text = "Nova venda")
-        }
+                HomeShortcutCard(
+                    title = "Histórico",
+                    description = "Ver movimentações",
+                    icon = Icons.Default.History,
+                    onClick = onHistory,
+                    modifier = Modifier.weight(1f)
+                )
+            }
 
-        OutlinedButton(
-            onClick = onHistory,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(text = "Ver histórico")
+            if (state.recentTransactions.isNotEmpty()) {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            text = "Últimas movimentações",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+
+                        TextButton(
+                            onClick = onHistory
+                        ) {
+                            Text(
+                                text = "Ver todas"
+                            )
+                        }
+                    }
+
+                    state.recentTransactions.forEach { transaction ->
+
+                        RecentTransactionItem(
+                            transaction = transaction,
+                            onClick = onHistory
+                        )
+                    }
+                }
+            }
         }
     }
 }
