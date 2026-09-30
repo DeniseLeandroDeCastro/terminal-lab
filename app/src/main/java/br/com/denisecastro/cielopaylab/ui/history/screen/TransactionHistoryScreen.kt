@@ -28,7 +28,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import br.com.denisecastro.cielopaylab.ui.components.filterbar.TransactionFilterBar
+import br.com.denisecastro.cielopaylab.ui.components.menu.TransactionSortMenu
 import br.com.denisecastro.cielopaylab.ui.history.model.TransactionFilter
+import br.com.denisecastro.cielopaylab.ui.history.model.TransactionSort
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,6 +41,10 @@ fun TransactionHistoryScreen(
 ) {
     var selectedFilter by remember {
         mutableStateOf(TransactionFilter.ALL)
+    }
+
+    var selectedSort by remember {
+        mutableStateOf(TransactionSort.NEWEST)
     }
 
     val filteredTransactions = when (selectedFilter) {
@@ -55,6 +61,28 @@ fun TransactionHistoryScreen(
         TransactionFilter.DECLINED -> transactions.filter {
             it.status == TransactionStatus.DECLINED
         }
+    }
+
+    val sortedTransactions = when (selectedSort) {
+        TransactionSort.NEWEST ->
+            filteredTransactions.sortedByDescending {
+                it.timestamp
+            }
+
+        TransactionSort.OLDEST ->
+            filteredTransactions.sortedBy {
+                it.timestamp
+            }
+
+        TransactionSort.HIGHEST_VALUE ->
+            filteredTransactions.sortedByDescending {
+                it.amountInCents
+            }
+
+        TransactionSort.LOWEST_VALUE ->
+            filteredTransactions.sortedBy {
+                it.amountInCents
+            }
     }
 
     Scaffold(
@@ -94,6 +122,16 @@ fun TransactionHistoryScreen(
                 )
             )
 
+            TransactionSortMenu(
+                selectedSort = selectedSort,
+                onSortSelected = { sort ->
+                    selectedSort = sort
+                },
+                modifier = Modifier.padding(
+                    horizontal = 24.dp
+                )
+            )
+
             if (filteredTransactions.isEmpty()) {
                 Text(
                     text = if (transactions.isEmpty()) {
@@ -111,7 +149,7 @@ fun TransactionHistoryScreen(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     items(
-                        items = filteredTransactions,
+                        items = sortedTransactions,
                         key = { transaction ->
                             transaction.id
                         }
