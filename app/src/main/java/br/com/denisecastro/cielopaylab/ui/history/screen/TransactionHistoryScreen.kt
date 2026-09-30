@@ -29,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import br.com.denisecastro.cielopaylab.ui.components.filterbar.TransactionFilterBar
 import br.com.denisecastro.cielopaylab.ui.components.menu.TransactionSortMenu
+import br.com.denisecastro.cielopaylab.ui.history.components.TransactionHistorySummary
 import br.com.denisecastro.cielopaylab.ui.history.model.TransactionFilter
 import br.com.denisecastro.cielopaylab.ui.history.model.TransactionSort
 
@@ -45,6 +46,16 @@ fun TransactionHistoryScreen(
 
     var selectedSort by remember {
         mutableStateOf(TransactionSort.NEWEST)
+    }
+
+    val approvedTransactions = transactions.filter {
+        it.status == TransactionStatus.APPROVED
+    }
+
+    val approvedCount = approvedTransactions.size
+
+    val approvedAmountInCents = approvedTransactions.sumOf {
+        it.amountInCents
     }
 
     val filteredTransactions = when (selectedFilter) {
@@ -110,6 +121,14 @@ fun TransactionHistoryScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
+            TransactionHistorySummary(
+                approvedCount = approvedCount,
+                approvedAmountInCents = approvedAmountInCents,
+                modifier = Modifier.padding(
+                    horizontal = 24.dp,
+                    vertical = 8.dp
+                )
+            )
 
             TransactionFilterBar(
                 selectedFilter = selectedFilter,
