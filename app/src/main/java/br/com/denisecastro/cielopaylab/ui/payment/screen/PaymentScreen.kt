@@ -61,44 +61,47 @@ fun PaymentScreen(
             verticalArrangement = Arrangement.spacedBy(20.dp)
         )  {
 
-            CurrencyTextField(
-                value = state.amount,
-                enabled = !state.isLoading,
-                onValueChange = onAmountChanged,
-                modifier = Modifier.fillMaxWidth()
-            )
+            if (state.transaction == null) {
 
-            Text(
-                text = "Forma de pagamento",
-                style = MaterialTheme.typography.titleMedium
-            )
-
-            PaymentTypeSelector(
-                selectedPaymentType = state.paymentType,
-                enabled = !state.isLoading,
-                onPaymentTypeChanged = onPaymentTypeChanged
-            )
-
-            LoadingButton(
-                text = "Processar venda",
-                isLoading = state.isLoading,
-                enabled = amountInCents > 0L,
-                onClick = onProcessPayment,
-                modifier = Modifier.fillMaxWidth(),
-                containerColor = BotaoProcessarVenda,
-                contentColor = Color.White
-            )
-
-            state.errorMessage?.let { error ->
-                Text(
-                    text = error,
-                    color = MaterialTheme.colorScheme.error
+                CurrencyTextField(
+                    value = state.amount,
+                    enabled = !state.isLoading,
+                    onValueChange = onAmountChanged,
+                    modifier = Modifier.fillMaxWidth()
                 )
-            }
 
-            state.transaction?.let { transaction ->
+                Text(
+                    text = "Forma de pagamento",
+                    style = MaterialTheme.typography.titleMedium
+                )
+
+                PaymentTypeSelector(
+                    selectedPaymentType = state.paymentType,
+                    enabled = !state.isLoading,
+                    onPaymentTypeChanged = onPaymentTypeChanged
+                )
+
+                LoadingButton(
+                    text = "Processar venda",
+                    isLoading = state.isLoading,
+                    enabled = amountInCents > 0L,
+                    onClick = onProcessPayment,
+                    modifier = Modifier.fillMaxWidth(),
+                    containerColor = BotaoProcessarVenda,
+                    contentColor = Color.White
+                )
+
+                state.errorMessage?.let { error ->
+                    Text(
+                        text = error,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+
+            } else {
+
                 TransactionResult(
-                    transaction = transaction,
+                    transaction = state.transaction,
                     onNewPayment = onNewPayment
                 )
             }
