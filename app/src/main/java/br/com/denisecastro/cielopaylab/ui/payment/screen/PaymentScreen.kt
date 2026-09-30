@@ -21,15 +21,11 @@ import br.com.denisecastro.cielopaylab.ui.components.PaymentTypeSelector
 import br.com.denisecastro.cielopaylab.ui.components.TransactionResult
 import br.com.denisecastro.cielopaylab.ui.payment.state.PaymentUiState
 import br.com.denisecastro.cielopaylab.ui.theme.BotaoProcessarVenda
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.TopAppBar
+import br.com.denisecastro.cielopaylab.ui.payment.components.PaymentHeader
+import androidx.compose.foundation.background
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PaymentScreen(
     state: PaymentUiState,
@@ -41,32 +37,30 @@ fun PaymentScreen(
 ) {
     val amountInCents = state.amount.toLongOrNull() ?: 0L
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(text = "Nova venda")
-                },
-                navigationIcon = {
-                    IconButton(
-                        onClick = onBack
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Voltar"
-                        )
-                    }
-                }
-            )
-        }
-    ) { innerPadding ->
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
+
+        PaymentHeader(
+            onBack = onBack
+        )
+
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .padding(24.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
+                .fillMaxWidth()
+                .weight(1f)
+                .verticalScroll(rememberScrollState())
+                .padding(
+                    start = 24.dp,
+                    end = 24.dp,
+                    top = 12.dp,
+                    bottom = 32.dp
+                ),
+            verticalArrangement = Arrangement.spacedBy(20.dp)
+        )  {
+
             CurrencyTextField(
                 value = state.amount,
                 enabled = !state.isLoading,
