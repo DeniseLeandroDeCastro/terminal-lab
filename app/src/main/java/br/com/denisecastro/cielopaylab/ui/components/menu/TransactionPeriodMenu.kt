@@ -1,12 +1,13 @@
 package br.com.denisecastro.cielopaylab.ui.components.menu
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -14,7 +15,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import br.com.denisecastro.cielopaylab.ui.history.model.TransactionPeriod
@@ -31,20 +31,24 @@ fun TransactionPeriodMenu(
     }
 
     Box(
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier
     ) {
         TextButton(
             onClick = {
                 expanded = true
-            },
-            modifier = Modifier.align(Alignment.CenterStart)
+            }
         ) {
+            Icon(
+                imageVector = Icons.Default.CalendarMonth,
+                contentDescription = null
+            )
+
             Text(
-                text = "Período: ${selectedPeriod.label}"
+                text = selectedPeriod.label
             )
 
             Icon(
-                imageVector = Icons.Default.ArrowDropDown,
+                imageVector = Icons.Default.KeyboardArrowDown,
                 contentDescription = "Opções de período"
             )
         }
@@ -56,9 +60,17 @@ fun TransactionPeriodMenu(
             }
         ) {
             TransactionPeriod.entries.forEach { period ->
+
                 DropdownMenuItem(
                     text = {
-                        Text(text = period.label)
+                        Text(
+                            text = period.label,
+                            color = if (period == selectedPeriod) {
+                                MaterialTheme.colorScheme.primary
+                            } else {
+                                MaterialTheme.colorScheme.onSurface
+                            }
+                        )
                     },
                     onClick = {
                         onPeriodSelected(period)
@@ -86,7 +98,7 @@ fun TransactionPeriodMenuAllPreview() {
 
 @Preview(
     name = "Período - Últimos 7 dias",
-    showBackground = true
+    showSystemUi = true
 )
 @Composable
 fun TransactionPeriodMenuLast7DaysPreview() {

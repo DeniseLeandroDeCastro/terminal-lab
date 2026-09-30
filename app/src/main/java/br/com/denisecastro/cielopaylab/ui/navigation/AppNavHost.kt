@@ -8,7 +8,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import br.com.denisecastro.cielopaylab.ui.details.TransactionDetailsScreen
+import br.com.denisecastro.cielopaylab.ui.details.screens.TransactionDetailsScreen
 import br.com.denisecastro.cielopaylab.ui.details.viewmodel.TransactionDetailsViewModel
 import br.com.denisecastro.cielopaylab.ui.history.screen.TransactionHistoryScreen
 import br.com.denisecastro.cielopaylab.ui.home.screen.HomeScreen

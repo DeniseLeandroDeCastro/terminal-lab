@@ -1,12 +1,13 @@
 package br.com.denisecastro.cielopaylab.ui.components.menu
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.SwapVert
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -14,7 +15,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import br.com.denisecastro.cielopaylab.ui.history.model.TransactionSort
@@ -31,20 +31,24 @@ fun TransactionSortMenu(
     }
 
     Box(
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier
     ) {
         TextButton(
             onClick = {
                 expanded = true
-            },
-            modifier = Modifier.align(Alignment.CenterEnd)
+            }
         ) {
+            Icon(
+                imageVector = Icons.Default.SwapVert,
+                contentDescription = null
+            )
+
             Text(
-                text = "Ordenar por: ${selectedSort.label}"
+                text = selectedSort.label
             )
 
             Icon(
-                imageVector = Icons.Default.ArrowDropDown,
+                imageVector = Icons.Default.KeyboardArrowDown,
                 contentDescription = "Opções de ordenação"
             )
         }
@@ -53,13 +57,20 @@ fun TransactionSortMenu(
             expanded = expanded,
             onDismissRequest = {
                 expanded = false
-            },
-            modifier = Modifier.align(Alignment.TopEnd)
+            }
         ) {
             TransactionSort.entries.forEach { sort ->
+
                 DropdownMenuItem(
                     text = {
-                        Text(text = sort.label)
+                        Text(
+                            text = sort.label,
+                            color = if (sort == selectedSort) {
+                                MaterialTheme.colorScheme.primary
+                            } else {
+                                MaterialTheme.colorScheme.onSurface
+                            }
+                        )
                     },
                     onClick = {
                         onSortSelected(sort)
@@ -71,7 +82,10 @@ fun TransactionSortMenu(
     }
 }
 
-@Preview(name = "Ordenação - Mais recentes", showSystemUi = true)
+@Preview(
+    name = "Ordenação - Mais recentes",
+    showBackground = true
+)
 @Composable
 fun TransactionSortMenuNewestPreview() {
     CieloPayLabTheme {
@@ -82,7 +96,10 @@ fun TransactionSortMenuNewestPreview() {
     }
 }
 
-@Preview(name = "Ordenação - Maior valor", showSystemUi = true)
+@Preview(
+    name = "Ordenação - Maior valor",
+    showSystemUi = true
+)
 @Composable
 fun TransactionSortMenuHighestValuePreview() {
     CieloPayLabTheme {

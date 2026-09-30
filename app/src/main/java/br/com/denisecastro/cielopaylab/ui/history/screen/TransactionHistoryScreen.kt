@@ -6,14 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import br.com.denisecastro.cielopaylab.domain.model.PaymentType
 import br.com.denisecastro.cielopaylab.domain.model.Transaction
 import br.com.denisecastro.cielopaylab.domain.model.TransactionStatus
-import br.com.denisecastro.cielopaylab.ui.history.components.TransactionHistoryItem
+import br.com.denisecastro.cielopaylab.ui.history.components.item.TransactionHistoryItem
 import br.com.denisecastro.cielopaylab.ui.theme.CieloPayLabTheme
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,13 +23,18 @@ import androidx.compose.runtime.setValue
 import br.com.denisecastro.cielopaylab.ui.components.filterbar.TransactionFilterBar
 import br.com.denisecastro.cielopaylab.ui.components.menu.TransactionPeriodMenu
 import br.com.denisecastro.cielopaylab.ui.components.menu.TransactionSortMenu
-import br.com.denisecastro.cielopaylab.ui.history.components.TransactionHistorySummary
+import br.com.denisecastro.cielopaylab.ui.history.components.summary.TransactionHistorySummary
 import br.com.denisecastro.cielopaylab.ui.history.model.TransactionFilter
 import br.com.denisecastro.cielopaylab.ui.history.model.TransactionPeriod
 import br.com.denisecastro.cielopaylab.ui.history.model.TransactionSort
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.Alignment
+import br.com.denisecastro.cielopaylab.ui.history.components.HistoryHeader
 import java.util.Calendar
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TransactionHistoryScreen(
     transactions: List<Transaction>,
@@ -144,30 +142,19 @@ fun TransactionHistoryScreen(
             }
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(text = "Histórico de transações")
-                },
-                navigationIcon = {
-                    IconButton(
-                        onClick = onBack
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Voltar"
-                        )
-                    }
-                }
-            )
-        }
-    ) { innerPadding ->
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
+
+        HistoryHeader(
+            onBack = onBack
+        )
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
         ) {
             TransactionHistorySummary(
                 approvedCount = approvedCount,
@@ -190,25 +177,31 @@ fun TransactionHistoryScreen(
                 )
             )
 
-            TransactionPeriodMenu(
-                selectedPeriod = selectedPeriod,
-                onPeriodSelected = { period ->
-                    selectedPeriod = period
-                },
-                modifier = Modifier.padding(
-                    horizontal = 24.dp
-                )
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        horizontal = 16.dp,
+                        vertical = 4.dp
+                    ),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
 
-            TransactionSortMenu(
-                selectedSort = selectedSort,
-                onSortSelected = { sort ->
-                    selectedSort = sort
-                },
-                modifier = Modifier.padding(
-                    horizontal = 24.dp
+                TransactionPeriodMenu(
+                    selectedPeriod = selectedPeriod,
+                    onPeriodSelected = { period ->
+                        selectedPeriod = period
+                    }
                 )
-            )
+
+                TransactionSortMenu(
+                    selectedSort = selectedSort,
+                    onSortSelected = { sort ->
+                        selectedSort = sort
+                    }
+                )
+            }
 
             if (filteredTransactions.isEmpty()) {
                 Text(
@@ -223,8 +216,7 @@ fun TransactionHistoryScreen(
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(horizontal = 24.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                        .padding(horizontal = 24.dp)
                 ) {
                     items(
                         items = sortedTransactions,

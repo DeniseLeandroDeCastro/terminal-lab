@@ -1,21 +1,14 @@
-package br.com.denisecastro.cielopaylab.ui.details
+package br.com.denisecastro.cielopaylab.ui.details.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Card
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -35,8 +28,31 @@ import br.com.denisecastro.cielopaylab.ui.components.dialog.DeleteTransactionDia
 import br.com.denisecastro.cielopaylab.ui.theme.CieloPayLabTheme
 import br.com.denisecastro.cielopaylab.ui.utils.toDisplayName
 import br.com.denisecastro.cielopaylab.ui.utils.toFormattedDate
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.DeleteOutline
+import androidx.compose.material.icons.filled.ErrorOutline
+import androidx.compose.material.icons.filled.Remove
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.TextButton
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
+import br.com.denisecastro.cielopaylab.ui.details.components.TransactionDetailsHeader
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TransactionDetailsScreen(
     transaction: Transaction?,
@@ -56,34 +72,27 @@ fun TransactionDetailsScreen(
         mutableStateOf(false)
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(text = "Detalhes da transação")
-                },
-                navigationIcon = {
-                    IconButton(
-                        onClick = onBack
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Voltar"
-                        )
-                    }
-                }
-            )
-        }
-    ) { innerPadding ->
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
+
+        TransactionDetailsHeader(
+            onBack = onBack
+        )
+
         when {
             isLoading -> {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(innerPadding)
-                        .padding(24.dp)
+                        .padding(horizontal = 24.dp)
                 ) {
-                    Text(text = "Carregando transação...")
+                    Text(
+                        text = "Carregando transação...",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
             }
 
@@ -101,8 +110,7 @@ fun TransactionDetailsScreen(
                     },
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(innerPadding)
-                        .padding(24.dp)
+                        .padding(horizontal = 24.dp)
                 )
             }
 
@@ -110,8 +118,7 @@ fun TransactionDetailsScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(innerPadding)
-                        .padding(24.dp)
+                        .padding(horizontal = 24.dp)
                 ) {
                     Text(
                         text = errorMessage ?: "Transação não encontrada.",
@@ -157,52 +164,103 @@ private fun TransactionDetailsContent(
     onDeleteTransaction: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val statusColor = transaction.status.toStatusColor()
+
     Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        modifier = modifier.verticalScroll(
+            rememberScrollState()
+        ),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        Text(
-            text = CurrencyUtils.formatFromCents(transaction.amountInCents),
-            style = MaterialTheme.typography.headlineMedium
-        )
 
-        Text(
-            text = transaction.status.toDisplayName(),
-            style = MaterialTheme.typography.titleMedium,
-            color = transaction.status.toStatusColor()
-        )
+        // Status
+        Box(
+            modifier = Modifier
+                .size(72.dp)
+                .background(
+                    color = statusColor.copy(alpha = 0.12f),
+                    shape = CircleShape
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = transaction.status.toStatusIcon(),
+                contentDescription = null,
+                tint = statusColor,
+                modifier = Modifier.size(34.dp)
+            )
+        }
 
+        // Valor e status
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            Text(
+                text = CurrencyUtils.formatFromCents(
+                    transaction.amountInCents
+                ),
+                style = MaterialTheme.typography.headlineLarge,
+                fontWeight = FontWeight.Bold
+            )
+
+            Text(
+                text = transaction.status.toDisplayName(),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = statusColor
+            )
+        }
+
+        // Informações da transação
         Card(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(24.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    .copy(alpha = 0.40f)
+            ),
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 0.dp
+            )
         ) {
             Column(
-                modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 TransactionDetailRow(
                     label = "Forma de pagamento",
                     value = transaction.paymentType.toDisplayName()
                 )
 
-                HorizontalDivider()
+                HorizontalDivider(
+                    color = MaterialTheme.colorScheme.outlineVariant
+                )
 
                 TransactionDetailRow(
                     label = "Data e hora",
                     value = transaction.timestamp.toFormattedDate()
                 )
 
-                HorizontalDivider()
+                HorizontalDivider(
+                    color = MaterialTheme.colorScheme.outlineVariant
+                )
 
                 TransactionDetailRow(
                     label = "Tempo de resposta",
                     value = "${transaction.responseTimeMillis} ms"
                 )
 
-                HorizontalDivider()
+                HorizontalDivider(
+                    color = MaterialTheme.colorScheme.outlineVariant
+                )
 
                 TransactionDetailRow(
                     label = "ID da transação",
-                    value = transaction.id
+                    value = transaction.id.toShortTransactionId()
                 )
             }
         }
@@ -210,33 +268,89 @@ private fun TransactionDetailsContent(
         errorMessage?.let { error ->
             Text(
                 text = error,
-                color = MaterialTheme.colorScheme.error
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.fillMaxWidth()
             )
         }
 
-        if (transaction.status == TransactionStatus.APPROVED) {
-            LoadingButton(
-                text = "Cancelar venda",
-                isLoading = isCancelling,
-                enabled = !isDeleting,
-                onClick = onCancelTransaction,
-                modifier = Modifier.fillMaxWidth(),
-                containerColor = Color.Black,
-                contentColor = Color.White,
-                loadingColor = Color.DarkGray
-            )
-        }
-
-        LoadingButton(
-            text = "Excluir venda",
-            isLoading = isDeleting,
-            enabled = !isCancelling,
-            onClick = onDeleteTransaction,
+        // Ações
+        Column(
             modifier = Modifier.fillMaxWidth(),
-            containerColor = MaterialTheme.colorScheme.error,
-            contentColor = MaterialTheme.colorScheme.onError,
-            loadingColor = MaterialTheme.colorScheme.error
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+
+            if (transaction.status == TransactionStatus.APPROVED) {
+                LoadingButton(
+                    text = "Cancelar venda",
+                    isLoading = isCancelling,
+                    enabled = !isDeleting,
+                    onClick = onCancelTransaction,
+                    modifier = Modifier.fillMaxWidth(),
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                    loadingColor = MaterialTheme.colorScheme.primary
+                )
+            }
+
+            TextButton(
+                onClick = onDeleteTransaction,
+                enabled = !isCancelling && !isDeleting,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                if (isDeleting) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(18.dp),
+                        strokeWidth = 2.dp,
+                        color = MaterialTheme.colorScheme.error
+                    )
+
+                    Spacer(
+                        modifier = Modifier.width(8.dp)
+                    )
+
+                    Text(
+                        text = "Excluindo...",
+                        color = MaterialTheme.colorScheme.error
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.Default.DeleteOutline,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.error
+                    )
+
+                    Spacer(
+                        modifier = Modifier.width(8.dp)
+                    )
+
+                    Text(
+                        text = "Excluir transação",
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            }
+        }
+
+        Spacer(
+            modifier = Modifier.height(16.dp)
         )
+    }
+}
+
+private fun TransactionStatus.toStatusIcon(): ImageVector {
+    return when (this) {
+        TransactionStatus.APPROVED ->
+            Icons.Default.Check
+
+        TransactionStatus.DECLINED ->
+            Icons.Default.Close
+
+        TransactionStatus.ERROR ->
+            Icons.Default.ErrorOutline
+
+        TransactionStatus.CANCELLED ->
+            Icons.Default.Remove
     }
 }
 
@@ -258,6 +372,14 @@ private fun TransactionDetailRow(
             text = value,
             style = MaterialTheme.typography.bodyLarge
         )
+    }
+}
+
+private fun String.toShortTransactionId(): String {
+    return if (length > 20) {
+        "${take(8)}...${takeLast(8)}"
+    } else {
+        this
     }
 }
 
