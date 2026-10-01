@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import br.com.denisecastro.cielopaylab.core.util.CurrencyUtils
 import br.com.denisecastro.cielopaylab.ui.theme.CieloPayLabTheme
+import androidx.compose.ui.platform.testTag
 
 @Composable
 fun CurrencyTextField(
@@ -67,7 +68,9 @@ fun CurrencyTextField(
 
                 onValueChange(digits)
             },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag("currency_input"),
             enabled = enabled,
             singleLine = true,
             keyboardOptions = KeyboardOptions(
