@@ -6,23 +6,23 @@
         <option name="selectionMode" value="DROPDOWN" />
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="shouldNotDisplayRecentTransactionsWhenListIsEmpty()">
+      <SelectionState runConfigName="shouldDisplayOnlyApprovedTransactionsWhenApprovedFilterIsSelected()">
         <option name="selectionMode" value="DROPDOWN" />
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="shouldDisplayHomeBalanceSummary()">
+      <SelectionState runConfigName="shouldDisplayOnlyCancelledTransactionsWhenCancelledFilterIsSelected()">
         <option name="selectionMode" value="DROPDOWN" />
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="shouldCallHistoryWhenSeeAllIsClicked()">
+      <SelectionState runConfigName="shouldDisplayOnlyDeclinedTransactionsWhenDeclinedFilterIsSelected()">
         <option name="selectionMode" value="DROPDOWN" />
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="shouldDisplayRecentTransactionData()">
+      <SelectionState runConfigName="shouldCallOnTransactionClickWhenTransactionIsClicked()">
         <option name="selectionMode" value="DROPDOWN" />
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="shouldCallHistoryWhenRecentTransactionIsClicked()">
+      <SelectionState runConfigName="shouldCallOnBackWhenBackButtonIsClicked()">
         <option name="selectionMode" value="DROPDOWN" />
         <DialogSelection />
       </SelectionState>
