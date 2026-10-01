@@ -6,23 +6,23 @@
         <option name="selectionMode" value="DROPDOWN" />
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="shouldDisplayErrorMessage()">
+      <SelectionState runConfigName="shouldNotDisplayRecentTransactionsWhenListIsEmpty()">
         <option name="selectionMode" value="DROPDOWN" />
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="shouldDisplayTransactionResultWhenPaymentIsProcessed()">
+      <SelectionState runConfigName="shouldDisplayHomeBalanceSummary()">
         <option name="selectionMode" value="DROPDOWN" />
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="shouldCallNewPaymentWhenNewPaymentButtonIsClicked()">
+      <SelectionState runConfigName="shouldCallHistoryWhenSeeAllIsClicked()">
         <option name="selectionMode" value="DROPDOWN" />
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="shouldCallOnBackWhenBackButtonIsClicked()">
+      <SelectionState runConfigName="shouldDisplayRecentTransactionData()">
         <option name="selectionMode" value="DROPDOWN" />
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="shouldDisableInputsWhilePaymentIsLoading()">
+      <SelectionState runConfigName="shouldCallHistoryWhenRecentTransactionIsClicked()">
         <option name="selectionMode" value="DROPDOWN" />
         <DialogSelection />
       </SelectionState>
