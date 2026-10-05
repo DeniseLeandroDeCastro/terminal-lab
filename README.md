@@ -524,19 +524,17 @@ Ele representa dois estados principais.
 
 ### Estado normal
 
-```text
-┌──────────────────────────────┐
-│       Processar venda        │
-└──────────────────────────────┘
-```
+
+<img width="344" height="76" alt="image" src="https://github.com/user-attachments/assets/2e03d72f-e23c-4e85-abd2-a0d882c44341" /> <br>
+
+<img width="344" height="76" alt="image" src="https://github.com/user-attachments/assets/52b6cb94-885c-40b1-aaac-8bbf1cd429f8" />
+
 
 ### Estado de processamento
 
-```text
-┌──────────────────────────────┐
-│        ◌  Aguarde...         │
-└──────────────────────────────┘
-```
+
+<img width="344" height="76" alt="image" src="https://github.com/user-attachments/assets/0e6daf1b-fed5-4393-abb6-d201290ab7ba" />
+
 
 Durante o processamento:
 
@@ -2555,10 +2553,6 @@ Durante sua construção são praticados conceitos como:
 
 `Domain` ✅ &nbsp;&nbsp; `ViewModels` ✅ &nbsp;&nbsp; `Repository` ✅ &nbsp;&nbsp; `Room` ✅
 
-<br>
-
-**Próxima etapa: testes de interface com Jetpack Compose**
-
 </div>
 
 ---
@@ -2591,9 +2585,5 @@ O CieloPayLab faz parte do meu processo contínuo de estudo e aprofundamento em:
 **Hilt • Room • Coroutines • Flow • StateFlow**
 
 **JUnit • MockK • Testes automatizados**
-
-<br>
-
-**Projeto em evolução**
 
 </div>
