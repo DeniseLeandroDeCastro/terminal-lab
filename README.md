@@ -31,6 +31,19 @@ gerenciamento de estado, persistência, regras de negócio e qualidade de softwa
 
 ---
 
+<div align="center">
+
+<img width="350" height="700" alt="image" src="https://github.com/user-attachments/assets/e5af3202-b080-4baf-8684-acf7dadd5ccd" />
+
+<img width="350" height="700" alt="image" src="https://github.com/user-attachments/assets/b9f3fc2e-f17e-4675-902c-2b828e3a8169" />
+
+<img width="350" height="700" alt="image" src="https://github.com/user-attachments/assets/d4c45dab-334e-485b-9580-4b029ed19984" />
+
+<img width="350" height="700" alt="image" src="https://github.com/user-attachments/assets/076385b2-db9b-4dd0-a7ed-32d44da37e48" />
+
+</div>
+
+
 ## Sumário
 
 - [Sobre o projeto](#sobre-o-projeto)
